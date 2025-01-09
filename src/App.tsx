@@ -1,35 +1,65 @@
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import LoginForm from "./Component/Login";
-import MessengerUI from "./Component/MessengerUI";
+import Login from "./Component/Login";
 import HomePage from "./Component/Home";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 import { Toaster } from "react-hot-toast";
-import UserDetail from "./Component/UserDetail";
-import UserFullDetail from "./Component/UserFullDetail";
+import SimpleMessageUI from "./Component/SimpleMessageUI";
+import AdvanceMessageUI from "./Component/AdvanceMessageUI";
+import Calculator from "./Component/Calculator";
+import TodoList from "./Component/TodoList";
+import Profile from "./Component/Profile";
+import About from "./Component/About";
+import SignUp from "./Component/SignUp";
+import Portfolio from "./Component/Portfolio";
+import NotFound from "./Component/NotFound";
 
 const route = createHashRouter([
   {
     path: "/",
-    element: <LoginForm />,
-  },
-  {
-    path: "/chat",
-    element: <MessengerUI />,
+    element: <Login />,
   },
   {
     path: "/home",
     element: <HomePage />,
   },
   {
-    path: "/users",
-    element: <UserDetail />,
+    path: "/simple-message",
+    element: <SimpleMessageUI />,
   },
   {
-    path: "/UserFullDetail",
-    element: <UserFullDetail />,
+    path: "/advance-MessageUi",
+    element: <AdvanceMessageUI />,
   },
- 
+  {
+    path: "/calc",
+    element: <Calculator />,
+  },
+  {
+    path: "/todos",
+    element: <TodoList />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/about",
+    element: <About />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
+  {
+    path: "/port",
+    element: <Portfolio />,
+  },
+  {
+    path:"*",
+    element:<NotFound/>
+  }
+  
 ]);
 
 function App() {

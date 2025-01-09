@@ -1,367 +1,538 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import { IoChevronBackOutline } from "react-icons/io5";
-// import { MdRemove, MdSend } from "react-icons/md";
-// import { useSelector } from "react-redux";
-// import toast from "react-hot-toast";
-// import { Stomp } from "@stomp/stompjs";
-// import SockJS from "sockjs-client";
-// import { userService } from "../Service/userService";
+import React, { useEffect, useRef, useState } from "react";
+import { IoChevronBackOutline } from "react-icons/io5";
+import { MdClose, MdSend } from "react-icons/md";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { userService } from "../Service/userService";
 
-// interface User {
-//   id: string;
-//   userName: string;
-//   profilePic: string;
-//   status: "Online" | "Offline";
-// }
+interface User {
+  id: string;
+  userName: string;
+  profilePic: string;
+  status: "Online" | "Offline";
+}
 
-// interface Message {
-//   sender: string;
-//   message: string;
-//   createdAt: Date;
-//   media?: any; // Optional for media messages
-// }
+interface Message {
+  sender: string;
+  message: string;
+  createdAt: Date;
+  media?: any; // Optional for media messages
+}
 
-// interface UserState {
-//   token: string;
-//   userdata: {
-//     id: string;
-//     userName: string;
-//     profilePic: string;
-//   };
-// }
+interface UserState {
+  token: string;
+  userdata: {
+    id: string;
+    userName: string;
+    profilePic: string;
+  };
+}
 
-// const UserFullDetail: React.FC = () => {
-//   const token = useSelector((state: { User: UserState }) => state.User.token);
-//   const userData = useSelector(
-//     (state: { User: UserState }) => state.User.userdata
-//   );
+const UserFullDetail: React.FC = () => {
+  const token = useSelector((state: { User: UserState }) => state.User.token);
+  const userData = useSelector(
+    (state: { User: UserState }) => state.User.userdata
+  );
 
-//   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-//   const [message, setMessage] = useState<string>("");
-//   const [messages, setMessages] = useState<Message[]>([]);
-//   const [users, setUsers] = useState<User[]>([]);
-//   const [stompClient, setStompClient] = useState<any>(null);
-//   const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for image/video file
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [stompClient, setStompClient] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for image/video file
+  const [filePreview, setFilePreview] = useState<string | null>(null); // Preview for image/video file
 
-//   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-//   const scrollToBottom = () => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-//   };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-//   useEffect(() => {
-//     scrollToBottom();
-//   }, [messages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-//   const handleSelectUser = (user: User) => {
-//     setMessages([]);
-//     setSelectedUser(user);
-//   };
+  const handleSelectUser = (user: User) => {
+    setMessages([]);
+    setSelectedUser(user);
+  };
 
-//   const fetchAllUsersData = async () => {
-//     try {
-//       if (!token) {
-//         toast.error("Token not found");
-//         return;
-//       }
-//       const res = await userService.getUsersData(token);
-//       if (res.success) {
-//         setUsers(res.data);
-//       }
-//     } catch (error) {
-//       console.error("Could not fetch user data", error);
-//     }
-//   };
+  const fetchAllUsersData = async () => {
+    try {
+      if (!token) {
+        toast.error("Token not found");
+        return;
+      }
+      const res = await userService.getUsersData(token);
+      if (res.success) {
+        setUsers(res.data);
+      }
+    } catch (error) {
+      console.error("Could not fetch user data", error);
+    }
+  };
 
-//   useEffect(() => {
-//     fetchAllUsersData();
-//   }, [token]);
+  useEffect(() => {
+    fetchAllUsersData();
+  }, [token]);
 
-//   useEffect(() => {
-//     const socket = new SockJS("http://localhost:8080/ws");
-//     const client = Stomp.over(socket);
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:8080/ws");
+    const client = Stomp.over(socket);
 
-//     client.connect({}, () => {
-//       console.log("WebSocket connected");
-//       client.subscribe("/public/messages", (message) => {
-//         const messageData = JSON.parse(message.body);
-//         console.log("Message received:", messageData);
-//         setMessages((prevMessages) => [...prevMessages, messageData]);
-//         setMessage("");
-//       });
-//     });
+    client.connect({}, () => {
+      console.log("WebSocket connected");
+      client.subscribe("/public/messages", (message) => {
+        const messageData = JSON.parse(message.body);
+        console.log("Message received:", messageData);
+        setMessages((prevMessages) => [...prevMessages, messageData]);
+        setMessage("");
+      });
+    });
 
-//     setStompClient(client);
+    setStompClient(client);
 
-//     return () => {
-//       client.disconnect(() => console.log("WebSocket disconnected"));
-//     };
-//   }, []);
+    return () => {
+      client.disconnect(() => console.log("WebSocket disconnected"));
+    };
+  }, []);
 
-//   const sendMessage = () => {
-//     if (stompClient && (message.trim() || selectedFile) && selectedUser) {
-//       const messageData = {
-//         senderId: userData.id,
-//         receiverId: selectedUser.id,
-//         messageContent: message,
-//       };
-//       stompClient.send("/app/sendMessage", {}, JSON.stringify(messageData));
-//       console.log("Message sent:", messageData);
-//       setMessage("");
-//       setSelectedFile(null); // Clear the selected file after sending
-//     }
-//   };
+  const sendMessage = () => {
+    if (stompClient && (message.trim() || selectedFile) && selectedUser) {
+      const messageData = {
+        senderId: userData.id,
+        receiverId: selectedUser.id,
+        messageContent: message,
+      };
+      stompClient.send("/app/sendMessage", {}, JSON.stringify(messageData));
+      console.log("Message sent:", messageData);
+      setMessage("");
+      setSelectedFile(null); // Clear the selected file after sending
+      setFilePreview(null); // Clear preview after sending
+    }
+  };
 
-//   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-//     if (e.key === "Enter") {
-//       sendMessage();
-//     }
-//   };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
 
-//   const sendMessageUserTyping = () => {
-//     if (stompClient && message.trim()) {
-//       stompClient.send(
-//         "/app/sendTypingMessage",
-//         {},
-//         JSON.stringify(`${userData.userName} is typing...`)
-//       );
-//     }
-//   };
+  const getMessages = async () => {
+    try {
+      if (!selectedUser) return;
+      const res = await userService.getUserMessages(token, selectedUser.id);
+      if (res.success) {
+        setMessages(res.data.messages);
+      }
+    } catch (error) {
+      console.error("Could not fetch messages", error);
+    }
+  };
 
-  // const getMessages = async () => {
-  //   try {
-  //     if (!selectedUser) return;
-  //     const res = await userService.getUserMessages(token, selectedUser.id);
-  //     if (res.success) {
-  //       setMessages(res.data.messages);
-  //     }
-  //   } catch (error) {
-  //     console.error("Could not fetch messages", error);
-  //   }
-  // };
+  useEffect(() => {
+    if (selectedUser) {
+      getMessages();
+    }
+  }, [selectedUser]);
 
-  // useEffect(() => {
-  //   if (selectedUser) {
-  //     getMessages();
-  //   }
-  // }, [selectedUser]);
+  // Handle file selection and set preview
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log("Selected file:", file);
+      const fileURL = URL.createObjectURL(file);
+      console.log("File URL:", fileURL);
+      setFilePreview(fileURL); // Set the file preview for image/video
+    }
+  };
 
-//   // Handle file selection
-//   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0];
-//     if (file) {
-//       setSelectedFile(file);
-//     }
-//   };
+  const handleFileSave = async (): Promise<void> => {
+    setSelectedFile(null);
+    if (!selectedFile) return; // Ensure `selectedFile` is not null
+    setMessages((prev: any) => [
+      ...prev,
+      {
+        sender: userData.id,
+        createdAt: new Date(),
+        media: URL.createObjectURL(selectedFile), // Correctly handle file
+      },
+    ]);
+    try {
+      const data = new FormData();
+      data.append("file", selectedFile);
 
-  // const handleFileSave = async (): Promise<void> => {
-  //   setSelectedFile(null);
-  //   if (!selectedFile) return; // Ensure `selectedFile` is not null
-  //   setMessages((prev: any) => [
-  //     ...prev,
-  //     {
-  //       sender: userData.id,
-  //       createdAt: new Date(),
-  //       media: URL.createObjectURL(selectedFile), // Correctly handle file
-  //     },
-  //   ]);
-  //   try {
-  //     const data = new FormData();
-  //     data.append("file", selectedFile);
+      data.append(
+        "messageRequest",
+        JSON.stringify({ senderId: userData.id, receiverId: selectedUser?.id })
+      );
+      const res = await userService.SendMedia(token, data);
+      console.log("res is ", res);
+    } catch (error) {
+      console.log("Error saving file:", error);
+    }
+  };
 
-  //     data.append(
-  //       "messageRequest",
-  //       JSON.stringify({ senderId: userData.id, receiverId: selectedUser?.id })
-  //     );
-  //     const res = await userService.SendMedia(token, data);
-  //     console.log("res is ", res);
-  //   } catch (error) {
-  //     console.log("Error saving file:", error);
-  //   }
-  // };
+  // return (
+  //   <div className="w-full min-h-screen bg-gradient-to-br from-[#1e1e2f] to-[#121212] flex flex-col">
+  //     {/* Header */}
+  //     <div className="flex items-center justify-between bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 p-4 shadow-lg">
+  //       <IoChevronBackOutline
+  //         size={25}
+  //         className="text-white cursor-pointer hover:text-purple-300 transition-all duration-300"
+  //       />
+  //       <h1 className="text-2xl text-white font-semibold">Manish's Chat App</h1>
+  //       <div className="flex items-center flex-col">
+  //         <img
+  //           className="w-12 h-12 rounded-full object-cover border-2 border-purple-400 shadow-md"
+  //           src={userData?.profilePic}
+  //           alt={userData?.userName}
+  //         />
+  //         <p className="text-white font-medium">{userData?.userName}</p>
+  //       </div>
+  //     </div>
 
-//   return (
-//     <div className="w-full min-h-screen bg-[#212121] flex flex-col">
-//       {/* Header */}
-//       <div className="flex items-center justify-between bg-gradient-to-r from-[#2c333f] to-[#161d29] p-2 shadow-lg">
-//         <IoChevronBackOutline
-//           size={25}
-//           className="text-[#c5c7d4] cursor-pointer"
-//         />
-//         <h1 className="text-2xl text-[#c5c7d4]">Manish's Chat App</h1>
-//         <div className="flex items-center flex-col">
-//           <img
-//             className="w-12 h-12 rounded-full object-cover border-2 border-[#4b4b4b]"
-//             src={userData?.profilePic}
-//             alt={userData?.userName}
-//           />
-//           <p className="text-[#c5c7d4]">{userData?.userName}</p>
-//         </div>
-//       </div>
+  //     <div className="flex flex-row w-full flex-grow">
+  //       {/* Users List */}
+  //       <div className="w-1/4 bg-[#161d39] p-6 text-white overflow-y-auto border-r border-purple-700">
+  //         <h2 className="text-xl mb-6 font-bold text-purple-400">Users</h2>
+  //         <div className="space-y-4">
+  //           {users.map((user) => (
+  //             <div
+  //               key={user.id}
+  //               className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 rounded-lg cursor-pointer transition-transform transform hover:scale-105"
+  //               onClick={() => handleSelectUser(user)}
+  //             >
+  //               <img
+  //                 className="w-12 h-12 rounded-full border-2 border-purple-400"
+  //                 src={user.profilePic}
+  //                 alt={user.userName}
+  //               />
+  //               <div className="flex flex-col">
+  //                 <span className="text-lg font-semibold">{user.userName}</span>
+  //                 <span
+  //                   className={`text-sm font-medium ${
+  //                     user.status === "Online"
+  //                       ? "text-green-400"
+  //                       : "text-gray-500"
+  //                   }`}
+  //                 >
+  //                   {user.status}
+  //                 </span>
+  //               </div>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       </div>
 
-//       <div className="flex flex-row w-full min-h-[80vh]">
-//         {/* Users List */}
-//         <div className="w-[25%] bg-[#161d39] p-6 text-[#c5c7d4] overflow-y-auto rounded-sm">
-//           <h2 className="text-xl mb-6 font-semibold">Users</h2>
-//           <div className="flex flex-col gap-4">
-//             {users.map((user) => (
-//               <div
-//                 key={user.id}
-//                 className="flex items-center gap-4 p-4 cursor-pointer hover:bg-[#2c333f] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-//                 onClick={() => handleSelectUser(user)}
-//               >
-//                 <img
-//                   className="w-12 h-12 rounded-full object-cover border-2 border-[#4b4b4b]"
-//                   src={user.profilePic}
-//                   alt={user.userName}
-//                 />
-//                 <div className="flex flex-col">
-//                   <span className="text-lg font-medium">{user.userName}</span>
-//                   <span
-//                     className={`text-sm ${
-//                       user.status === "Online"
-//                         ? "text-green-500"
-//                         : "text-gray-500"
-//                     }`}
-//                   >
-//                     {user.status}
-//                   </span>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
+  //       {/* Chat Section */}
+  //       {selectedUser ? (
+  //         <div className="flex-1 bg-[#121212] p-6 flex flex-col">
+  //           <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-purple-900 rounded-lg mb-4 shadow-md p-4">
+  //             <div className="flex items-center gap-4">
+  //               <img
+  //                 className="w-16 h-16 rounded-full border-2 border-purple-400"
+  //                 src={selectedUser.profilePic}
+  //                 alt={selectedUser.userName}
+  //               />
+  //               <div className="flex flex-col">
+  //                 <span className="text-2xl font-semibold text-white">
+  //                   {selectedUser.userName}
+  //                 </span>
+  //                 <span className="text-sm text-gray-400">Online</span>
+  //               </div>
+  //             </div>
+  //           </div>
 
-//         {/* Chat Section */}
-//         {selectedUser ? (
-//           <div className="flex-1 bg-[#161d29] p-6">
-//             <div className="bg-[#2c333f] rounded-lg mb-2 shadow-lg p-1 pl-2">
-//               <div className="flex items-center gap-4">
-//                 <img
-//                   className="w-16 h-16 rounded-full object-cover border-2 border-[#4b4b4b]"
-//                   src={selectedUser.profilePic}
-//                   alt={selectedUser.userName}
-//                 />
-//                 <div className="flex flex-col">
-//                   <span className="text-2xl font-semibold text-[#c5c7d4]">
-//                     {selectedUser.userName}
-//                   </span>
-//                   <span className="text-sm text-[#a0a0a0]">Online</span>
-//                 </div>
-//               </div>
-//             </div>
+  //           <div className="flex-1 overflow-y-auto space-y-4">
+  //             {messages.map((msg, index) => (
+  //               <div
+  //                 key={index}
+  //                 className={`flex ${
+  //                   msg.sender === userData.id ? "justify-end" : "justify-start"
+  //                 }`}
+  //               >
+  //                 <div
+  //                   className={`p-4 rounded-lg max-w-[60%] text-white shadow-lg ${
+  //                     msg.sender === userData.id
+  //                       ? "bg-gradient-to-br from-purple-600 to-purple-800"
+  //                       : "bg-gradient-to-br from-gray-700 to-gray-900"
+  //                   }`}
+  //                 >
+  //                   {msg.message && <span>{msg.message}</span>}
+  //                   {msg.media && (
+  //                     <div className="mt-2">
+  //                       <img
+  //                         src={msg.media}
+  //                         alt="media"
+  //                         className="w-[15vw] rounded-md shadow-md"
+  //                       />
+  //                     </div>
+  //                   )}
+  //                 </div>
+  //               </div>
+  //             ))}
+  //           </div>
 
-//             <div className="flex flex-col gap-6">
-//               {messages.map((msg, index) => (
-//                 <div
-//                   key={index}
-//                   className={`flex ${
-//                     msg.sender === userData.id ? "justify-end" : "justify-start"
-//                   }`}
-//                 >
-//                   <div
-//                     className={`p-4 rounded-lg max-w-[70%] text-white shadow-md ${
-//                       msg.sender === userData.id
-//                         ? "bg-[#2c333f]"
-//                         : "bg-[#4b4b4b]"
-//                     }`}
-//                   >
-//                     {msg.message && <span>{msg.message}</span>}
-//                     {msg.media && (
-//                       <div className={`mt-2 ${msg.message ? "" : "mt-0"}`}>
-//                         <img
-//                           src={msg.media}
-//                           alt="Media"
-//                           className="w-[25vw]   rounded-lg"
-//                         />
-//                       </div>
-//                     )}
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
+  //           <div ref={messagesEndRef} />
 
-//             {selectedFile && (
-//               <div className="fixed bottom-[10vw]  flex flex-col items-center gap-2 p-2 bg-[#2c333f] rounded-lg shadow-lg w-[30vw] h-[20vw]">
-//                 <div className="text-[#c5c7d4] font-medium">Preview:</div>
-//                 {selectedFile.type.startsWith("image") ? (
-//                   <img
-//                     src={URL.createObjectURL(selectedFile)}
-//                     alt="Preview"
-//                     className="w-[95%] h-[95%] rounded-lg object-cover"
-//                   />
-//                 ) : (
-//                   <video
-//                     controls
-//                     className="w-[40%] h-[60%] rounded-lg"
-//                     src={URL.createObjectURL(selectedFile)}
-//                   />
-//                 )}
-//                 <button
-//                   onClick={() => {
-//                     setSelectedFile(null);
-//                   }}
-//                   className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
-//                 >
-//                   <MdRemove size={20} />
-//                 </button>
-//               </div>
-//             )}
+  //           <div className="flex items-center gap-4 mt-4">
+  //             <input
+  //               type="text"
+  //               className="w-full p-4 rounded-lg border border-purple-700 bg-[#1e1e2f] text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+  //               placeholder="Type a message..."
+  //               value={message}
+  //               onChange={(e) => setMessage(e.target.value)}
+  //               onKeyDown={handleKeyDown}
+  //             />
+  //             <input
+  //               type="file"
+  //               accept="image/*, video/*"
+  //               className="hidden"
+  //               id="file-input"
+  //               onChange={handleFileSelect}
+  //             />
+  //             <label
+  //               htmlFor="file-input"
+  //               className="p-4 bg-purple-700 rounded-lg cursor-pointer text-white hover:bg-purple-600"
+  //             >
+  //               📷
+  //             </label>
+  //             <button
+  //               onClick={() => {
+  //                 handleFileSave();
+  //                 if (message.length > 0) {
+  //                   sendMessage();
+  //                 }
+  //               }}
+  //               className="p-4 bg-purple-700 rounded-lg text-white hover:bg-purple-600"
+  //             >
+  //               <MdSend size={20} />
+  //             </button>
+  //           </div>
 
-//             {/* Typing Indicator */}
-//             {message && (
-//               <div className="text-[#c5c7d4] text-sm mt-2">Typing...</div>
-//             )}
+  //           {filePreview && (
+  //             <div className="mt-4 fixed bottom-[6vw]  ">
+  //               <button
+  //                 onClick={() =>{
+  //                   setSelectedFile(null)
+  //                   setFilePreview(null)
+  //                 }} // Function to remove the file preview
+  //                 className="absolute top-0 right-0 p-2 bg-red-600 rounded-full text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg"
+  //               >
+  //                 <MdClose size={20} />
+  //               </button>
+  //               <p className="text-white font-semibold">Preview:</p>
+  //               {selectedFile?.type.startsWith("image") ? (
+  //                 <img
+  //                   src={filePreview}
+  //                   alt="File Preview"
+  //                   className="w-[20vw]  rounded-md shadow-lg mt-2"
+  //                 />
+  //               ) : (
+  //                 <video
+  //                   controls
+  //                   className="w-[20vw]  rounded-md shadow-lg mt-2"
+  //                 >
+  //                   <source src={filePreview} />
+  //                   Your browser does not support the video tag.
+  //                 </video>
+  //               )}
+  //             </div>
+  //           )}
+  //         </div>
+  //       ) : (
+  //         <div className="flex-1 flex justify-center items-center text-white">
+  //           <span className="text-lg font-medium">
+  //             Select a user to start chatting
+  //           </span>
+  //         </div>
+  //       )}
+  //     </div>
+  //   </div>
+  // );
 
-//             <div className="flex items-center gap-4 mt-6 ">
-//               {/* Message Input */}
-//               <input
-//                 type="text"
-//                 className="w-full p-4 bg-[#2c333f] text-[#c5c7d4] rounded-lg border-2 border-[#4b4b4b] focus:border-yellow-500 focus:outline-none transition-all"
-//                 placeholder="Type a message..."
-//                 value={message}
-//                 onChange={(e) => {
-//                   setMessage(e.target.value);
-//                   sendMessageUserTyping();
-//                 }}
-//                 onKeyDown={handleKeyDown}
-//               />
-//               {/* File Input */}
-//               <input
-//                 type="file"
-//                 accept="image/*, video/*"
-//                 className="hidden"
-//                 id="file-input"
-//                 onChange={handleFileSelect}
-//               />
-//               <label
-//                 htmlFor="file-input"
-//                 className="p-4 bg-[#2c333f] text-yellow-500 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#3a434f]"
-//               >
-//                 <span>📷</span>
-//               </label>
-//               {/* Send Button */}
-//               <button
-//                 onClick={() => {
-//                   handleFileSave();
-//                   if (message.length > 0) {
-//                     sendMessage();
-//                   }
-//                 }}
-//                 className="p-4 bg-[#2c333f] text-yellow-500 rounded-lg transition-all duration-300 ease-in-out hover:bg-[#3a434f]"
-//               >
-//                 <MdSend size={20} />
-//               </button>
-//             </div>
-//           </div>
-//         ) : (
-//           <div className="flex-1 bg-[#161d29] p-6 flex justify-center items-center text-[#c5c7d4]">
-//             <span className="text-xl">Select a user to start chatting</span>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#1e1e2f] to-[#121212] flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 p-4 shadow-lg">
+        <IoChevronBackOutline
+          size={25}
+          className="text-white cursor-pointer hover:text-purple-300 transition-all duration-300"
+        />
+        <h1 className="text-2xl text-white font-semibold">Manish's Chat App</h1>
+        <div className="flex items-center flex-col">
+          <img
+            className="w-12 h-12 rounded-full object-cover border-2 border-purple-400 shadow-md"
+            src={userData?.profilePic}
+            alt={userData?.userName}
+          />
+          <p className="text-white font-medium">{userData?.userName}</p>
+        </div>
+      </div>
 
-// export default UserFullDetail;
+      <div className="flex flex-col md:flex-row w-full flex-grow">
+        {/* Users List */}
+        <div className="w-full md:w-1/4 bg-[#161d39] p-6 text-white overflow-y-auto border-b md:border-r border-purple-700">
+          <h2 className="text-xl mb-6 font-bold text-purple-400">Users</h2>
+          <div className="space-y-4">
+            {users.map((user) => (
+              <div
+                key={user.id}
+                className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 rounded-lg cursor-pointer transition-transform transform hover:scale-105"
+                onClick={() => handleSelectUser(user)}
+              >
+                <img
+                  className="w-12 h-12 rounded-full border-2 border-purple-400"
+                  src={user.profilePic}
+                  alt={user.userName}
+                />
+                <div className="flex flex-col">
+                  <span className="text-lg font-semibold">{user.userName}</span>
+                  <span
+                    className={`text-sm font-medium ${
+                      user.status === "Online"
+                        ? "text-green-400"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {user.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat Section */}
+        {selectedUser ? (
+          <div className="flex-1 bg-[#121212] p-6 flex flex-col">
+            <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-purple-900 rounded-lg mb-4 shadow-md p-4">
+              <div className="flex items-center gap-4">
+                <img
+                  className="w-16 h-16 rounded-full border-2 border-purple-400"
+                  src={selectedUser.profilePic}
+                  alt={selectedUser.userName}
+                />
+                <div className="flex flex-col">
+                  <span className="text-2xl font-semibold text-white">
+                    {selectedUser.userName}
+                  </span>
+                  <span className="text-sm text-gray-400">Online</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-4">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    msg.sender === userData.id ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`p-4 rounded-lg max-w-[60%] text-white shadow-lg ${
+                      msg.sender === userData.id
+                        ? "bg-gradient-to-br from-purple-600 to-purple-800"
+                        : "bg-gradient-to-br from-gray-700 to-gray-900"
+                    }`}
+                  >
+                    {msg.message && <span>{msg.message}</span>}
+                    {msg.media && (
+                      <div className="mt-2">
+                        <img
+                          src={msg.media}
+                          alt="media"
+                          className="w-[15vw] rounded-md shadow-md"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div ref={messagesEndRef} />
+
+            <div className="flex items-center gap-4 mt-4">
+              <input
+                type="text"
+                className="w-full p-4 rounded-lg border border-purple-700 bg-[#1e1e2f] text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Type a message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <input
+                type="file"
+                accept="image/*, video/*"
+                className="hidden"
+                id="file-input"
+                onChange={handleFileSelect}
+              />
+              <label
+                htmlFor="file-input"
+                className="p-4 bg-purple-700 rounded-lg cursor-pointer text-white hover:bg-purple-600"
+              >
+                📷
+              </label>
+              <button
+                onClick={() => {
+                  handleFileSave();
+                  if (message.length > 0) {
+                    sendMessage();
+                  }
+                }}
+                className="p-4 bg-purple-700 rounded-lg text-white hover:bg-purple-600"
+              >
+                <MdSend size={20} />
+              </button>
+            </div>
+
+            {filePreview && selectedFile && (
+              <div className="mt-4 fixed bottom-[6vw]  ">
+                <button
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setFilePreview(null);
+                  }} // Function to remove the file preview
+                  className="absolute top-0 right-0 p-2 bg-red-600 rounded-full text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg"
+                >
+                  <MdClose size={20} />
+                </button>
+                <p className="text-white font-semibold">Preview:</p>
+                {selectedFile?.type.startsWith("image") ? (
+                  <img
+                    src={filePreview}
+                    alt="File Preview"
+                    className="w-[20vw] rounded-md shadow-lg mt-2"
+                  />
+                ) : (
+                  <video
+                    controls
+                    className="w-[20vw] rounded-md shadow-lg mt-2"
+                  >
+                    <source src={filePreview} />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex-1 flex justify-center items-center text-white">
+            <span className="text-lg font-medium">
+              Select a user to start chatting
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default UserFullDetail;
