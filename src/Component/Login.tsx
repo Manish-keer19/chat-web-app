@@ -35,7 +35,7 @@ const LoginForm = () => {
         console.log("Login successful: ", res);
         dispatch(setUser(res.data.userData));
         dispatch(setToken(res.data.token));
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       setLoginData("");

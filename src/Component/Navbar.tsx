@@ -4,7 +4,7 @@ import { logout } from "../features/User/UserSlice";
 import { useDispatch } from "react-redux";
 
 const menuItems = [
-  { title: "Home", path: "/" },
+  { title: "Home", path: "/home" },
   { title: "Calculator", path: "/calc" },
   { title: "Simple Chat", path: "/simple-message" },
   { title: "Advanced Chat", path: "/advance-MessageUi" },
@@ -15,19 +15,23 @@ const menuItems = [
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <nav className="bg-gradient-to-br from-indigo-900 via-blue-800 to-teal-800 shadow-md p-4">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <button onClick={() => navigate("/")} className="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+        <button
+          onClick={() => navigate("/home")}
+          className="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
+        >
           ChatApp
         </button>
 
