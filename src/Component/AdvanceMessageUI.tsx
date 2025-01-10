@@ -8,6 +8,7 @@ import SockJS from "sockjs-client";
 import { userService } from "../Service/userService";
 
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: string;
@@ -37,6 +38,7 @@ const AdvanceMessageUI: React.FC = () => {
   const userData = useSelector(
     (state: { User: UserState }) => state.User.userdata
   );
+  const navigate = useNavigate();
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -83,7 +85,8 @@ const AdvanceMessageUI: React.FC = () => {
   }, [token]);
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET);
+    // const socket = new SockJS(import.meta.env.VITE_BACKEND_LOCAL_WEBSOCKET);
     const client = Stomp.over(socket);
 
     client.connect({}, () => {
@@ -213,21 +216,32 @@ const AdvanceMessageUI: React.FC = () => {
       <div className="w-full min-h-screen bg-gradient-to-br from-[#1e1e2f] to-[#121212] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 p-4 shadow-lg">
-          <IoChevronBackOutline
-            size={25}
-            className="text-white cursor-pointer hover:text-purple-300 transition-all duration-300"
-          />
+          <button
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            <IoChevronBackOutline
+              size={25}
+              className="text-white cursor-pointer hover:text-purple-300 transition-all duration-300"
+            />
+          </button>
           <h1 className="text-2xl text-white font-semibold">
             Manish's Chat App
           </h1>
-          <div className="flex items-center flex-col">
+          <button
+            className="flex items-center flex-col"
+            onClick={() => {
+              navigate("/profile");
+            }}
+          >
             <img
               className="w-12 h-12 rounded-full object-cover border-2 border-purple-400 shadow-md"
               src={userData?.profilePic}
               alt={userData?.userName}
             />
             <p className="text-white font-medium">{userData?.userName}</p>
-          </div>
+          </button>
         </div>
 
         <div className="flex flex-col md:flex-row w-full flex-grow">

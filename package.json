@@ -22,7 +22,7 @@
       "output": "dist"
     },
     "files": [
-        "electron/**/*",
+      "electron/**/*",
       "build/**/*",
       "node_modules/**/*",
       "package.json"
@@ -34,8 +34,6 @@
       ],
       "sign": false
     },
-   
-       
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true

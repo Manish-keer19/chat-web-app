@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../features/User/UserSlice";
+import { useDispatch } from "react-redux";
 
 const menuItems = [
-  { title: "Home", path: "/home" },
+  { title: "Home", path: "/" },
   { title: "Calculator", path: "/calc" },
   { title: "Simple Chat", path: "/simple-message" },
   { title: "Advanced Chat", path: "/advance-MessageUi" },
@@ -12,15 +14,22 @@ const menuItems = [
 ];
 
 const Navbar: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-gradient-to-br from-indigo-900 via-blue-800 to-teal-800 shadow-md p-4">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div className="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+        <button onClick={() => navigate("/")} className="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
           ChatApp
-        </div>
+        </button>
 
         {/* Hamburger Icon (Mobile) */}
         <div className="lg:hidden flex items-center">
@@ -29,8 +38,8 @@ const Navbar: React.FC = () => {
             className="text-white text-3xl focus:outline-none"
           >
             {isMenuOpen ? (
-              <span className="text-4xl absolute right-0 text-white z-1000 ">
-                ✖️
+              <span className="text-5xl absolute right-0  text-white z-1000 ">
+                X
               </span>
             ) : (
               <span className="text-4xl">☰</span>
@@ -55,6 +64,14 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
           ))}
+          <li className="group relative mb-4 lg:mb-0">
+            <button
+              onClick={handleLogout}
+              className="text-white text-lg font-semibold bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-300"
+            >
+              Logout
+            </button>
+          </li>
         </ul>
       </div>
     </nav>

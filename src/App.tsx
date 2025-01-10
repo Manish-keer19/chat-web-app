@@ -14,13 +14,14 @@ import SignUp from "./Component/SignUp";
 import Portfolio from "./Component/Portfolio";
 import NotFound from "./Component/NotFound";
 
+
 const route = createHashRouter([
   {
-    path: "/",
+    path: "/login",
     element: <Login />,
   },
   {
-    path: "/home",
+    path: "/",
     element: <HomePage />,
   },
   {
@@ -56,11 +57,12 @@ const route = createHashRouter([
     element: <Portfolio />,
   },
   {
-    path:"*",
-    element:<NotFound/>
-  }
-  
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
+
+
 
 function App() {
   return (

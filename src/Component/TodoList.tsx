@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MdEdit, MdClose } from "react-icons/md";
 import Navbar from "./Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { setTodos } from "../features/User/TodoSlice";
 
 interface Todo {
   id: number;
@@ -10,35 +12,43 @@ interface Todo {
 }
 
 const TodoList: React.FC = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const todosData = useSelector((state: any) => state.Todo.todos);
+
+  const [todos, SetTodos] = useState<Todo[]>(todosData);
   const [inputValue, setInputValue] = useState("");
+  const dispatch = useDispatch();
 
   const handleAddTodo = () => {
     if (inputValue.trim() !== "") {
-      setTodos([
+      SetTodos([
         ...todos,
         { id: Date.now(), text: inputValue, completed: false },
       ]);
-      setInputValue("");
     }
+    console.log("todos is ", todos);
+    dispatch(setTodos(todos));
+    setInputValue("");
   };
 
   const handleDeleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    SetTodos(todos.filter((todo) => todo.id !== id));
+    dispatch(setTodos(todos));
   };
 
   const handleToggleTodo = (id: number) => {
-    setTodos(
+    SetTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
+    dispatch(setTodos(todos));
   };
 
   const handleEditTodo = (id: number, newText: string) => {
-    setTodos(
+    SetTodos(
       todos.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo))
     );
+    dispatch(setTodos(todos));
   };
 
   return (

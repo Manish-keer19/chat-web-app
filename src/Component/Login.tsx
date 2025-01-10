@@ -1,132 +1,161 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
+import { FaUser, FaLock } from "react-icons/fa";
+import { setToken, setUser } from "../features/User/UserSlice";
 import { authService } from "../Service/Authservice";
 import { useDispatch } from "react-redux";
-import { setToken, setuser } from "../features/User/UserSlice";
-import { Link, useNavigate } from "react-router-dom";
 
-const LoginForm: React.FC = () => {
-  const [isHovered, setIsHovered] = useState(false);
+const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loginData, setLoginData] = useState("");
+
   const [password, setPassword] = useState("");
+  const [loginData, setLoginData] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth2 login URL
-    // window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
   };
 
   const handleGitHubLogin = () => {
     // Redirect to GitHub OAuth2 login URL
-    // window.location.href = "http://localhost:8080/oauth2/authorization/github";
+    window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
   };
 
   const handleSubmit = async () => {
     const data = { userName: loginData, password: password };
-
+    console.log("Data in login is ", data);
     try {
       console.log("Data in login is ", data);
       const res = await authService.login(data);
-
       if (res.success) {
         console.log("Login successful: ", res);
-        dispatch(setuser(res.data.userData));
+        dispatch(setUser(res.data.userData));
         dispatch(setToken(res.data.token));
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
+      setLoginData("");
+      setPassword("");
+      setIsLoading(false);
       console.log("Error in login: ", error);
     }
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen"
-      style={{ backgroundColor: "#212121" }}
-    >
-      <div
-        className={`bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md transform transition-all duration-500 ${
-          isHovered ? "scale-105" : "scale-100"
-        }`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-gray-900 to-black flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md"
       >
-        <h2 className="text-3xl font-semibold text-white text-center mb-6">
-          Login
-        </h2>
-
-        <div className="mb-4">
-          <label htmlFor="text" className="block text-gray-400 text-sm mb-2">
-            credentials
-          </label>
-          <input
-            type="text"
-            id="email"
-            className="w-full px-4 py-2 text-white bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email or username"
-            value={loginData}
-            onChange={(e) => setLoginData(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-400 text-sm mb-2"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="w-full px-4 py-2 text-white bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button
-          onClick={handleSubmit}
-          className="w-full py-2 mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded transition duration-300"
-        >
-          Login
-        </button>
-
-        <div className="mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="border-b border-gray-600 flex-grow"></span>
-            <span className="text-gray-400 px-2">or</span>
-            <span className="border-b border-gray-600 flex-grow"></span>
+        <div className="bg-opacity-20 backdrop-blur-xl bg-gray-900 rounded-2xl p-8 border border-opacity-30 border-purple-500 shadow-[0_0_40px_rgba(139,92,246,0.3)]">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Log In
+            </h1>
+            <p className="text-gray-400 mt-2">Welcome back!</p>
           </div>
-          <button
-            className="w-full flex items-center justify-center gap-2 py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded transition duration-300 mb-4"
-            onClick={handleGitHubLogin}
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
-              alt="GitHub"
-              className="w-5 h-5"
-            />
-            Login with GitHub
-          </button>
-          <button
-            className="w-full flex items-center justify-center gap-2 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded transition duration-300"
-            onClick={handleGoogleLogin}
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
-              alt="Google"
-              className="w-5 h-5"
-            />
-            Login with Google
-          </button>
+
+          <div className="space-y-6">
+            {/* Username Input */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaUser className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                name="username"
+                required
+                placeholder="Username"
+                value={loginData}
+                onChange={(e) => {
+                  setLoginData(e.target.value);
+                }}
+                className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+              />
+            </div>
+
+            {/* Password Input */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaLock className="text-gray-400" />
+              </div>
+              <input
+                type="password"
+                name="password"
+                required
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            >
+              {isLoading ? "Logging In..." : "Log In"}
+            </motion.button>
+
+            {/* Divider */}
+            <div className="flex items-center my-6">
+              <hr className="flex-grow border-gray-600" />
+              <span className="text-gray-400 px-2">or</span>
+              <hr className="flex-grow border-gray-600" />
+            </div>
+
+            {/* Google Login Button */}
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-2 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded transition duration-300 mb-4"
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              Log in with Google
+            </button>
+
+            {/* GitHub Login Button */}
+            <button
+              onClick={handleGitHubLogin}
+              className="w-full flex items-center justify-center gap-2 py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded transition duration-300"
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
+                alt="GitHub"
+                className="w-5 h-5"
+              />
+              Log in with GitHub
+            </button>
+          </div>
+
+          <p className="text-center text-gray-400 mt-4">
+            Don’t have an account?{" "}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={() => navigate("/signup")}
+              className="text-purple-400 hover:text-purple-300 font-medium focus:outline-none"
+            >
+              Sign Up
+            </motion.button>
+          </p>
         </div>
-        <p className="text-gray-400 text-sm mt-4 text-center">
-          Don’t have an account?{" "}
-          <Link to={"#"} className="text-blue-500 hover:underline">
-            sign-up
-          </Link>
-        </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

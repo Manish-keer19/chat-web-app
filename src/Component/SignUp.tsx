@@ -1,56 +1,47 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { FaUser, FaEnvelope, FaLock, FaImage } from 'react-icons/fa';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaEnvelope, FaLock, FaImage } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { authService } from "../Service/Authservice";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    profilePic: null as File | null,
-  });
+  const [userName, setUserName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const [selectedFile, setSelectedFile] = useState<File | null>();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setFormData(prev => ({
-        ...prev,
-        profilePic: file
-      }));
-      setPreviewUrl(URL.createObjectURL(file));
+      console.log("file is", file);
+      setSelectedFile(file);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match!');
-      return;
-    }
+  const handleSubmit = async () => {
+    // setIsLoading(true);
+    const data = {
+      userName,
+      email,
+      password,
+    };
 
-    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("data", data);
+    formData.append("file", selectedFile);
     try {
-      // Add your signup logic here
-      toast.success('Account created successfully!');
-      navigate('/login');
+      const res = await authService.signUp(formData);
+      console.log("res is ", res);
+      if (res.success) {
+        toast.success("Login karo bhai");
+        navigate("/login");
+      }
     } catch (error) {
-      toast.error('Failed to create account');
-    } finally {
-      setIsLoading(false);
+      console.log("Error in signup: ", error);
     }
   };
 
@@ -70,17 +61,14 @@ const SignUp = () => {
             <p className="text-gray-400 mt-2">Join our community today</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-6">
             {/* Profile Picture Upload */}
             <div className="flex justify-center mb-6">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="relative"
-              >
+              <motion.div whileHover={{ scale: 1.05 }} className="relative">
                 <div className="w-24 h-24 rounded-full border-2 border-purple-500 overflow-hidden">
-                  {previewUrl ? (
+                  {selectedFile ? (
                     <img
-                      src={previewUrl}
+                      src={URL.createObjectURL(selectedFile)}
                       alt="Profile Preview"
                       className="w-full h-full object-cover"
                     />
@@ -116,8 +104,8 @@ const SignUp = () => {
                 name="username"
                 required
                 placeholder="Username"
-                value={formData.username}
-                onChange={handleInputChange}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
               />
             </div>
@@ -132,8 +120,8 @@ const SignUp = () => {
                 name="email"
                 required
                 placeholder="Email address"
-                value={formData.email}
-                onChange={handleInputChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
               />
             </div>
@@ -148,8 +136,8 @@ const SignUp = () => {
                 name="password"
                 required
                 placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
               />
             </div>
@@ -164,8 +152,10 @@ const SignUp = () => {
                 name="confirmPassword"
                 required
                 placeholder="Confirm password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
               />
             </div>
@@ -174,25 +164,25 @@ const SignUp = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              type="submit"
+              onClick={handleSubmit}
               disabled={isLoading}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
             >
-              {isLoading ? 'Creating Account...' : 'Sign Up'}
+              {isLoading ? "Creating Account..." : "Sign Up"}
             </motion.button>
 
             {/* Login Link */}
             <p className="text-center text-gray-400">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="text-purple-400 hover:text-purple-300 font-medium focus:outline-none"
               >
                 Log in
               </motion.button>
             </p>
-          </form>
+          </div>
         </div>
       </motion.div>
     </div>
