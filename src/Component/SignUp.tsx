@@ -40,7 +40,7 @@ const SignUp = () => {
       console.log("res is ", res);
       if (res.success) {
         toast.success("Login karo bhai");
-        navigate("/login");
+        navigate("/");
         setIsLoading(false);
       }
     } catch (error) {
@@ -180,7 +180,7 @@ const SignUp = () => {
               Already have an account?{" "}
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/")}
                 className="text-purple-400 hover:text-purple-300 font-medium focus:outline-none"
               >
                 Log in
