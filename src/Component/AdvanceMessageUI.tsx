@@ -104,6 +104,12 @@ const AdvanceMessageUI: React.FC = () => {
         setMessages((prevMessages) => [...prevMessages, messageData]);
         setMessage("");
       });
+
+      // Error event
+      stompClient.onStompError = (frame:any) => {
+        console.error("Broker reported error: ", frame.headers["message"]);
+        console.error("Additional details: ", frame.body);
+      };
     });
 
     setStompClient(client);
