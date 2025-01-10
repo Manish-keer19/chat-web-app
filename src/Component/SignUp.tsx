@@ -23,7 +23,7 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
-    // setIsLoading(true);
+    setIsLoading(true);
     const data = {
       userName,
       email,
@@ -31,16 +31,20 @@ const SignUp = () => {
     };
 
     const formData = new FormData();
-    formData.append("data", data);
-    formData.append("file", selectedFile);
+    formData.append("data", JSON.stringify(data));
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
     try {
       const res = await authService.signUp(formData);
       console.log("res is ", res);
       if (res.success) {
         toast.success("Login karo bhai");
         navigate("/login");
+        setIsLoading(false);
       }
     } catch (error) {
+      setIsLoading(false);
       console.log("Error in signup: ", error);
     }
   };
