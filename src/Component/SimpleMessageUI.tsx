@@ -77,6 +77,7 @@ const SimpleMessageUI: React.FC = () => {
 
   useEffect(() => {
     const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET);
+        // const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET_WITH_HTTPS);
     // const socket = new SockJS(import.meta.env.VITE_BACKEND_LOCAL_WEBSOCKET);
     const client = Stomp.over(socket);
 
@@ -210,7 +211,7 @@ const SimpleMessageUI: React.FC = () => {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto py-4 space-y-4">
+                  <div className="flex-1 overflow-y-auto py-4 space-y-4 border">
                     {messages.map((msg, index) => (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}

@@ -106,11 +106,7 @@ const AdvanceMessageUI: React.FC = () => {
         setMessage("");
       });
 
-      // Error event
-      stompClient.onStompError = (frame:any) => {
-        console.error("Broker reported error: ", frame.headers["message"]);
-        console.error("Additional details: ", frame.body);
-      };
+  
     });
 
     setStompClient(client);
@@ -305,7 +301,7 @@ const AdvanceMessageUI: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-4 min-h-[50vh] ">
+              <div className="flex-1 overflow-y-auto space-y-4 min-h-[70vh] ">
                 {messages.map((msg, index) => (
                   <div
                     key={index}
