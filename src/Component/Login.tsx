@@ -19,14 +19,14 @@ const LoginForm = () => {
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth2 login URL
     toast.error(
-      "Some bug found in production, please use username and password to login"
+     "Google oauth2 is giving error in login you can use dummy account to login or use username and password"
     );
     // window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
   };
 
   const handleGitHubLogin = () => {
     toast.error(
-      "Some bug found in production, please use username and password to login"
+     "Github oauth2 is giving error in login you can use dummy account to login or use username and password"
     );
     // Redirect to GitHub OAuth2 login URL
     // window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
@@ -154,7 +154,7 @@ const LoginForm = () => {
             >
               <img
 
-                src="https://res.cloudinary.com/manish19/image/upload/v1730890540/profile/ltc0x7pdp2svh21nalvk.jpg"
+                src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leah"
                 alt="GitHub"
                 className="w-7 h-7 rounded-full"
               />

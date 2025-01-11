@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import { profileService } from "../Service/profileService";
 import { setUser } from "../features/User/UserSlice";
+import toast from "react-hot-toast";
 
 // interface UserProfile {
 //   id?: string;
@@ -32,6 +33,10 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditProfile = async () => {
+    if (!bio || !pronoun || !gender || !profession || !selectedFile) {
+      toast.error("Please fill all the fields");
+      return;
+    }
     const data = {
       bio,
       pronoun,
