@@ -13,13 +13,17 @@ import About from "./Component/About";
 import SignUp from "./Component/SignUp";
 import Portfolio from "./Component/Portfolio";
 import NotFound from "./Component/NotFound";
+import Dev from "./Component/Dev";
 
 const route = createHashRouter([
   {
     path: "/",
+    element: <Dev />,
+  },
+  {
+    path: "/login",
     element: <Login />,
   },
-  {},
   {
     path: "/home",
     element: <HomePage />,

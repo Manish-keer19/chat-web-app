@@ -23,6 +23,14 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userName || !email || !password || !confirmPassword) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
     setIsLoading(true);
     const data = {
       userName,

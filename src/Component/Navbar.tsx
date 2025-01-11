@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../features/User/UserSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const menuItems = [
   { title: "Home", path: "/home" },
@@ -14,6 +15,7 @@ const menuItems = [
 ];
 
 const Navbar: React.FC = () => {
+  const token = useSelector((state: any) => state.User.token);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -29,7 +31,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <button
-          onClick={() => navigate("/home")}
+          onClick={() => (token ? navigate("/home") : navigate("/login"))}
           className="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
         >
           ChatApp
@@ -57,25 +59,46 @@ const Navbar: React.FC = () => {
             isMenuOpen ? "top-0 opacity-100" : "top-[-100vh] opacity-0"
           } lg:top-0 left-0 lg:opacity-100 z-50`}
         >
-          {menuItems.map((item, index) => (
-            <li key={index} className="group relative mb-4 lg:mb-0">
-              <Link
-                to={item.path}
-                className="text-white text-lg sm:text-xl font-semibold capitalize tracking-wider transition-transform duration-300 hover:text-teal-300"
-              >
-                {item.title}
-                <span className="absolute left-0 bottom-0 w-0 h-1 bg-gradient-to-r from-teal-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-          ))}
-          <li className="group relative mb-4 lg:mb-0">
-            <button
-              onClick={handleLogout}
-              className="text-white text-lg font-semibold bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-300"
+          {menuItems.map(
+            (item, index) =>
+              token && (
+                <li key={index} className="group relative mb-4 lg:mb-0">
+                  <Link
+                    to={item.path}
+                    className="text-white text-lg sm:text-xl font-semibold capitalize tracking-wider transition-transform duration-300 hover:text-teal-300"
+                  >
+                    {item.title}
+                    <span className="absolute left-0 bottom-0 w-0 h-1 bg-gradient-to-r from-teal-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                </li>
+              )
+          )}
+          {
+            !token && (<motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="text-center"
             >
-              Logout
-            </button>
-          </li>
+              <Link
+                to="/login"
+                className="inline-block bg-purple-600 text-white py-2 px-6 rounded-full text-xl font-semibold hover:bg-purple-700 transition-all duration-300"
+              >
+                Login
+              </Link>
+            </motion.div>)
+          }
+          
+          {token && (
+            <li className="group relative mb-4 lg:mb-0">
+              <button
+                onClick={handleLogout}
+                className="text-white text-lg font-semibold bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-300"
+              >
+                Logout
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

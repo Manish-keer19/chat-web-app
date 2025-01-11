@@ -6,6 +6,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { setToken, setUser } from "../features/User/UserSlice";
 import { authService } from "../Service/Authservice";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -17,15 +18,26 @@ const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth2 login URL
-    window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
+    toast.error(
+      "Some bug found in production, please use username and password to login"
+    );
+    // window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
   };
 
   const handleGitHubLogin = () => {
+    toast.error(
+      "Some bug found in production, please use username and password to login"
+    );
     // Redirect to GitHub OAuth2 login URL
-    window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
+    // window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
   };
 
   const handleSubmit = async () => {
+    if (!loginData || !password) {
+      toast.error("Please enter username and password");
+      return;
+    }
+    setIsLoading(true);
     const data = { userName: loginData, password: password };
     console.log("Data in login is ", data);
     try {
@@ -36,8 +48,10 @@ const LoginForm = () => {
         dispatch(setUser(res.data.userData));
         dispatch(setToken(res.data.token));
         navigate("/home");
+        setIsLoading(false);
       }
     } catch (error) {
+      setIsLoading(false);
       setLoginData("");
       setPassword("");
       setIsLoading(false);

@@ -19,7 +19,7 @@ class AuthService {
       }
       throw new Error("Login failed"); // Throw an error if no success field in response
     } catch (error) {
-      toast.error("Login failed");
+      toast.error("could not login");
       toast.dismiss(toastId);
       console.log("Error in login: ", error);
       throw error; // Optional: re-throw error for further handling in UI
