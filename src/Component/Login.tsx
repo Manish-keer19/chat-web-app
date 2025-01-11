@@ -59,6 +59,23 @@ const LoginForm = () => {
     }
   };
 
+  const handleDemoLogin = async () => {
+    const data = { userName: "Dummy Account", password: "ms19" };
+    console.log("Data in login is ", data);
+    try {
+      console.log("Data in login is ", data);
+      const res = await authService.login(data);
+      if (res.success) {
+        console.log("Login successful: ", res);
+        dispatch(setUser(res.data.userData));
+        dispatch(setToken(res.data.token));
+        navigate("/home");
+      }
+    } catch (error) {
+      console.log("Error in login: ", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-gray-900 to-black flex items-center justify-center p-4">
       <motion.div
@@ -131,6 +148,19 @@ const LoginForm = () => {
               <hr className="flex-grow border-gray-600" />
             </div>
 
+            <button
+              onClick={handleDemoLogin}
+              className="w-full flex items-center justify-center gap-2 py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded transition duration-300"
+            >
+              <img
+
+                src="https://res.cloudinary.com/manish19/image/upload/v1730890540/profile/ltc0x7pdp2svh21nalvk.jpg"
+                alt="GitHub"
+                className="w-7 h-7 rounded-full"
+              />
+             Continue as Demo User
+            </button>
+
             {/* Google Login Button */}
             <button
               onClick={handleGoogleLogin}
@@ -156,6 +186,7 @@ const LoginForm = () => {
               />
               Log in with GitHub
             </button>
+           
           </div>
 
           <p className="text-center text-gray-400 mt-4">

@@ -188,7 +188,7 @@ const SignUp = () => {
               Already have an account?{" "}
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/login")}
                 className="text-purple-400 hover:text-purple-300 font-medium focus:outline-none"
               >
                 Log in
