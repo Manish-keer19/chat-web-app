@@ -86,6 +86,7 @@ const AdvanceMessageUI: React.FC = () => {
 
   useEffect(() => {
     const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET);
+    // const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET_WITH_HTTPS);
     // const socket = new SockJS(import.meta.env.VITE_BACKEND_LOCAL_WEBSOCKET);
     const client = Stomp.over(socket);
 
@@ -304,7 +305,7 @@ const AdvanceMessageUI: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-4">
+              <div className="flex-1 overflow-y-auto space-y-4 min-h-[50vh] ">
                 {messages.map((msg, index) => (
                   <div
                     key={index}
