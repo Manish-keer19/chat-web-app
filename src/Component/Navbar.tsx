@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -73,8 +73,8 @@ const Navbar: React.FC = () => {
                 </li>
               )
           )}
-          {
-            !token && (<motion.div
+          {!token && (
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
@@ -86,9 +86,9 @@ const Navbar: React.FC = () => {
               >
                 Login
               </Link>
-            </motion.div>)
-          }
-          
+            </motion.div>
+          )}
+
           {token && (
             <li className="group relative mb-4 lg:mb-0">
               <button

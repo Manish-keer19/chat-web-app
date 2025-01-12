@@ -18,18 +18,20 @@ const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth2 login URL
-    toast.error(
-     "Google oauth2 is giving error in login you can use dummy account to login or use username and password"
-    );
-    // window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
+    // toast.error(
+    //  "Google oauth2 is giving error in login you can use dummy account to login or use username and password"
+    // );
+    window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_AUTH2_URL;
+    // window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_LOCAL_AUTH2_URL;
   };
 
   const handleGitHubLogin = () => {
-    toast.error(
-     "Github oauth2 is giving error in login you can use dummy account to login or use username and password"
-    );
+    // toast.error(
+    //  "Github oauth2 is giving error in login you can use dummy account to login or use username and password"
+    // );
     // Redirect to GitHub OAuth2 login URL
-    // window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
+    window.location.href = import.meta.env.VITE_BACKEND_GITHUB_AUTH2_URL;
+    // window.location.href = import.meta.env.VITE_BACKEND_GITHUB_LOCAL_AUTH2_URL;
   };
 
   const handleSubmit = async () => {
