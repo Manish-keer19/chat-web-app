@@ -62,11 +62,16 @@ class AuthService {
         toast.dismiss(toastId);
         return res.data;
       } else {
+        toast.error(
+          "you can use dummy account to login or use username and password"
+        );
         toast.dismiss(toastId);
-        toast.error("could not get the oauth2 user data");
         return null;
       }
     } catch (error) {
+      toast.custom(
+        "you can use dummy account to login or use username and password"
+      );
       toast.dismiss(toastId);
       toast.error("could not get the oauth2 user data");
     }

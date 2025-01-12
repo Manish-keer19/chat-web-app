@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import { authService } from "../Service/Authservice";
 import { setToken, setUser } from "../features/User/UserSlice";
+import toast from "react-hot-toast";
 
 type userType = {
   id: string;
@@ -32,8 +33,12 @@ const HomePage: React.FC = () => {
         console.log("token from oauth2", res.data.token);
         dispatch(setToken(res.data.token));
         dispatch(setUser(res.data.user));
+      } else {
+        navigate("/login");
       }
     } catch (error) {
+      navigate("/login");
+     toast.error("could not get the oauth2 user data");
       console.error("could not get the oauth2 user data", error);
     }
   };
@@ -42,12 +47,10 @@ const HomePage: React.FC = () => {
     if (!userDetails) {
       getOauth2UserData();
     } else {
-      console.log("there is not need to ")
+      console.log("there is not need to ");
       setuserData(userDetails);
     }
   }, []);
-  
-
 
   const menuItems = [
     {
