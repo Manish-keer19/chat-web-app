@@ -39,7 +39,7 @@ const SignUp = () => {
     };
 
     const formData = new FormData();
-    formData.append("data", JSON.stringify(data));
+    formData.append("User", JSON.stringify(data));
     if (selectedFile) {
       formData.append("file", selectedFile);
     }
@@ -48,7 +48,7 @@ const SignUp = () => {
       console.log("res is ", res);
       if (res.success) {
         toast.success("Login karo bhai");
-        navigate("/");
+        navigate("/login");
         setIsLoading(false);
       }
     } catch (error) {
