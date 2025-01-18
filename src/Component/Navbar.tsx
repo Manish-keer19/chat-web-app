@@ -41,12 +41,10 @@ const Navbar: React.FC = () => {
         <div className="lg:hidden flex items-center">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-white text-3xl focus:outline-none"
+            className="text-white text-3xl focus:outline-none z-50 relative"
           >
             {isMenuOpen ? (
-              <span className="text-5xl absolute right-0  text-white z-1000 ">
-                X
-              </span>
+              <span className="text-5xl text-white">X</span>
             ) : (
               <span className="text-4xl">☰</span>
             )}
@@ -57,7 +55,7 @@ const Navbar: React.FC = () => {
         <ul
           className={`lg:flex lg:space-x-6 absolute lg:static bg-black bg-opacity-90 lg:bg-transparent w-full lg:w-auto p-6 lg:p-0 transition-all duration-500 ease-in-out transform ${
             isMenuOpen ? "top-0 opacity-100" : "top-[-100vh] opacity-0"
-          } lg:top-0 left-0 lg:opacity-100 z-50`}
+          } lg:top-0 left-0 lg:opacity-100 z-40`}
         >
           {menuItems.map(
             (item, index) =>
