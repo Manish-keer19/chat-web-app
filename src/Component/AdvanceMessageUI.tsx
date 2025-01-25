@@ -139,7 +139,7 @@ const AdvanceMessageUI: React.FC = () => {
         messageContent: message,
       };
       stompClient.send(
-        "/app/sendMessageSederAndReceiver",
+        "/app/sendMessageSenderAndReceiver",
         {},
         JSON.stringify(messageData)
       );

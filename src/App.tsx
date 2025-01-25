@@ -60,6 +60,7 @@ const route = createHashRouter([
     path: "/port",
     element: <Portfolio />,
   },
+
   {
     path: "*",
     element: <NotFound />,
