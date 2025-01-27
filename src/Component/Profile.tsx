@@ -55,8 +55,8 @@ const Profile: React.FC = () => {
       if (res.success) {
         console.log("Profile updated successfully");
         console.log("res is ", res);
-        dispatch(setUser(res.data.userData));
-        setProfileDetail(res.data.userData.profileDetail);
+        dispatch(setUser(res.data));
+        setProfileDetail(res.data.profileDetail);
         setIsEditing(false);
       }
     } catch (error) {
