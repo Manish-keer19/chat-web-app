@@ -64,10 +64,10 @@ const Dev = () => {
             className="text-center mb-12 sm:mb-16"
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Chat Desktop App
+              Chat Web App
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-              A modern desktop application built with React and TypeScript,
+              A modern Web application built with React and TypeScript,
               featuring real-time chat, todo management, and more.
             </p>
           </motion.div>
