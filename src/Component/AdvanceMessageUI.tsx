@@ -238,7 +238,7 @@ const AdvanceMessageUI: React.FC = () => {
             }}
           >
             <img
-              className="w-12 h-12 rounded-full object-cover border-2 border-purple-400 shadow-md"
+              className="w-12 h-12 rounded-full  border-2 border-purple-400 shadow-md object-cover"
               src={userData?.profilePic}
               alt={userData?.userName}
             />
@@ -258,7 +258,7 @@ const AdvanceMessageUI: React.FC = () => {
                   onClick={() => handleSelectUser(user)}
                 >
                   <img
-                    className="w-12 h-12 rounded-full border-2 border-purple-400"
+                    className="w-12 h-12 rounded-full border-2 border-purple-400 object-cover"
                     src={user.profilePic}
                     alt={user.userName}
                   />
@@ -386,7 +386,7 @@ const AdvanceMessageUI: React.FC = () => {
                     <img
                       src={filePreview}
                       alt="File Preview"
-                      className="w-[20vw] rounded-md shadow-lg mt-2"
+                      className="w-[20vw] rounded-md shadow-lg mt-2 "
                     />
                   ) : (
                     <video
