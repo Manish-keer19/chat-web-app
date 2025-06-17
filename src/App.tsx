@@ -9,11 +9,11 @@ import AdvanceMessageUI from "./Component/AdvanceMessageUI";
 import Calculator from "./Component/Calculator";
 import TodoList from "./Component/TodoList";
 import Profile from "./Component/Profile";
-import About from "./Component/About";
 import SignUp from "./Component/SignUp";
 import Portfolio from "./Component/Portfolio";
 import NotFound from "./Component/NotFound";
 import Dev from "./Component/Dev";
+import About from "./Component/About";
 
 const route = createHashRouter([
   {

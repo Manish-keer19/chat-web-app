@@ -9,8 +9,8 @@ const axiosInstance = axios.create({
   
   
   // baseURL:import.meta.env.VITE_BACKEND_URL, // Replace with your API base URL
-  baseURL:import.meta.env.VITE_BACKEND_LOCAL_URL, // Replace with your API base URL
-  // baseURL: import.meta.env.VITE_BACKEND_URL, // Replace with your API base URL
+  // baseURL:import.meta.env.VITE_BACKEND_LOCAL_URL, // Replace with your API base URL
+  baseURL: import.meta.env.VITE_BACKEND_URL, // Replace with your API base URL
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
