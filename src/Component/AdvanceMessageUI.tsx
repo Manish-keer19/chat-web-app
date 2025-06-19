@@ -2739,7 +2739,7 @@ const scrollToBottom = () => {
       
       const res = await userService.SendMedia(token, data);
       if (res.success) {
-        const newMessage = {
+        const newMessage: Message = {
           id: Date.now().toString(),
           sender: userData.id,
           message: "",
