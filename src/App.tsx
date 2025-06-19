@@ -4,7 +4,7 @@ import HomePage from "./Component/Home";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 import { Toaster } from "react-hot-toast";
-import SimpleMessageUI from "./Component/SimpleMessageUI";
+
 import AdvanceMessageUI from "./Component/AdvanceMessageUI";
 import Calculator from "./Component/Calculator";
 import TodoList from "./Component/TodoList";
@@ -28,10 +28,7 @@ const route = createHashRouter([
     path: "/home",
     element: <HomePage />,
   },
-  {
-    path: "/simple-message",
-    element: <SimpleMessageUI />,
-  },
+ 
   {
     path: "/advance-MessageUi",
     element: <AdvanceMessageUI />,

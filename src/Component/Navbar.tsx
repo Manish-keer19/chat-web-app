@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 const menuItems = [
   { title: "Home", path: "/home" },
   { title: "Calculator", path: "/calc" },
-  { title: "Simple Chat", path: "/simple-message" },
+
   { title: "Advanced Chat", path: "/advance-MessageUi" },
   { title: "Todo List", path: "/todos" },
   { title: "Profile", path: "/profile" },

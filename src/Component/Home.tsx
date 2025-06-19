@@ -59,12 +59,7 @@ const HomePage: React.FC = () => {
       icon: "🧮",
       description: "Simple Calculator",
     },
-    {
-      title: "Simple Chat",
-      path: "/simple-message",
-      icon: "💬",
-      description: "Basic Chat Interface",
-    },
+   
     {
       title: "Advanced Chat",
       path: "/advance-MessageUi",
