@@ -60,15 +60,16 @@ const Navbar: React.FC = () => {
           {menuItems.map(
             (item, index) =>
               token && (
-                <li key={index} className="group relative mb-4 lg:mb-0">
-                  <Link
-                    to={item.path}
-                    className="text-white text-lg sm:text-xl font-semibold capitalize tracking-wider transition-transform duration-300 hover:text-teal-300"
-                  >
-                    {item.title}
-                    <span className="absolute left-0 bottom-0 w-0 h-1 bg-gradient-to-r from-teal-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                </li>
+               <li key={index} className="group relative mb-4 lg:mb-0">
+  <Link
+    to={item.path}
+    className="text-white text-sm sm:text-base font-semibold capitalize tracking-wider transition-transform duration-300 hover:text-teal-300"
+  >
+    {item.title}
+    <span className="absolute left-0 bottom-0 w-0 h-1 bg-gradient-to-r from-teal-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
+  </Link>
+</li>
+
               )
           )}
           {!token && (
@@ -104,3 +105,7 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+
+
+

@@ -2847,9 +2847,7 @@ const scrollToBottom = () => {
                       Messages
                     </h1>
                   </div>
-                  <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <MdMoreVert className="text-gray-600 dark:text-gray-300" />
-                  </button>
+                  
                 </div>
                 {/* Search Bar */}
                 <div className="mt-4 relative">
