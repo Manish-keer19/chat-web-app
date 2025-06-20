@@ -15,6 +15,9 @@ import NotFound from "./Component/NotFound";
 import Dev from "./Component/Dev";
 import About from "./Component/About";
 
+import OAuthSuccessPage from "./Component/OAuthSuccessPage";
+
+
 const route = createHashRouter([
   {
     path: "/",
@@ -56,6 +59,10 @@ const route = createHashRouter([
   {
     path: "/port",
     element: <Portfolio />,
+  },
+  {
+    path: "/oauth-success",
+    element: <OAuthSuccessPage />,
   },
 
   {

@@ -53,7 +53,7 @@ class AuthService {
   public async getOauth2UserData() {
     const toastId = toast.loading("Getting oauth2 user data...");
     try {
-      const res = await axiosInstance.get("/oauth2/success", {
+      const res = await axiosInstance.get("/oauth2/get-user-data", {
         withCredentials: true,
       });
       console.log("res.data in oauth2 user data", res.data);

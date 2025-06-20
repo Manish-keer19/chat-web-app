@@ -70,6 +70,33 @@ class UserService {
       return null;
     }
   }
+
+  public async getOauthUserData(token: any,userId:String) {
+    
+    const toastId = toast.loading("Getting oauth user data...");
+    try {
+      const res = await axiosInstance.get(`/user/get-oauth-user-data/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("res.data in oauth user data", res.data);
+      if (res.data && res.data.success) {
+        toast.success("Oauth user data fetched successfully");
+        toast.dismiss(toastId);
+        return res.data;
+      } else {
+        toast.error("could not get the oauth user data");
+        toast.dismiss(toastId);
+        return null;
+      }
+    } catch (error) {
+      toast.error("could not get the oauth user data");
+      toast.dismiss(toastId);
+      console.log(error);
+      console.log("could not get the oauth user data", error);
+      return null;
+    }
+
+  }
 }
 
 export const userService = new UserService();

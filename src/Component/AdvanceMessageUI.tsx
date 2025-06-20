@@ -2579,7 +2579,8 @@ const scrollToBottom = () => {
   useEffect(() => {
     if (!userData?.id) return;
 
-    const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET_WITH_HTTPS);
+    // const socket = new SockJS(import.meta.env.VITE_BACKEND_URL_WEBSOCKET_WITH_HTTPS);
+    const socket = new SockJS(import.meta.env.VITE_BACKEND_LOCAL_WEBSOCKET);
     const client = Stomp.over(socket);
 
     client.connect({}, () => {
@@ -3148,12 +3149,7 @@ const scrollToBottom = () => {
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                   Choose from your existing conversations or start a new one
                 </p>
-                <button
-                  onClick={() => navigate("/contacts")}
-                  className="px-6 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
-                >
-                  New Message
-                </button>
+               
               </div>
             </div>
           )}
