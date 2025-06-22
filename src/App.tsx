@@ -16,6 +16,8 @@ import Dev from "./Component/Dev";
 import About from "./Component/About";
 
 import OAuthSuccessPage from "./Component/OAuthSuccessPage";
+import UserManagement from "./Component/Admin/UserManagment";
+
 
 
 const route = createHashRouter([
@@ -64,6 +66,11 @@ const route = createHashRouter([
     path: "/oauth-success",
     element: <OAuthSuccessPage />,
   },
+  {
+    path: "/admin",
+    element: <UserManagement />,
+  },
+ 
 
   {
     path: "*",

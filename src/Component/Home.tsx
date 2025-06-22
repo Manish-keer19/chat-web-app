@@ -84,6 +84,16 @@ const HomePage: React.FC = () => {
       icon: "👨‍💻",
       description: "About the dev",
     },
+     ...(userData?.role?.includes("ADMIN")
+    ? [
+        {
+          title: "Admin Panel",
+          path: "/admin",
+          icon: "🛠️",
+          description: "Manage users and system",
+        },
+      ]
+    : []),
   ];
 
   return (
