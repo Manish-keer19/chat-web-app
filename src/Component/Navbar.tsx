@@ -8,7 +8,7 @@ const menuItems = [
   { title: "Home", path: "/home" },
   { title: "Calculator", path: "/calc" },
 
-  { title: "Advanced Chat", path: "/advance-MessageUi" },
+  { title: "Chat Now", path: "/messages" },
   { title: "Todo List", path: "/todos" },
   { title: "Profile", path: "/profile" },
   { title: "About", path: "/about" },

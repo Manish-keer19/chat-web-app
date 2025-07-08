@@ -26,9 +26,10 @@ class UserService {
       const res = await axiosInstance.get(`/message/get-messages/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("res.data in user messages", res.data);
       if (res.data && res.data.success) {
-        console.log("res.data in user messages", res.data);
-        toast.success("User messages fetched successfully");
+        // console.log("res.data in user messages", res.data);
+        // toast.success("User messages fetched successfully");
         // toast.success("User messages fetched successfully");
         return res.data;
       }

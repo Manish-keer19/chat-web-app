@@ -263,7 +263,7 @@ const Dev = () => {
 
   useEffect(()=>{
     if (user) {
-    navigation("/advance-MessageUi")
+    navigation("/messages");
     return
 
 

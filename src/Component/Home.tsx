@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
     },
    
     {
-      title: "Advanced Chat",
+      title: "Chat Now",
       path: "/messages",
       icon: "📱",
       description: "Feature-rich Chat",

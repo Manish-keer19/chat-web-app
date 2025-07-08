@@ -12,6 +12,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
 import Lightbox from "react-18-image-lightbox";
 import "react-18-image-lightbox/style.css";
+// Add these imports at the top
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 
 interface User {
     id: string;
@@ -85,6 +89,7 @@ const MessageView: React.FC = () => {
 
                 navigate("/messages");
             } catch (error) {
+                
                 toast.error("Could not fetch user data");
                 navigate("/messages");
             }
@@ -263,6 +268,11 @@ const MessageView: React.FC = () => {
 
             const res = await userService.getUserMessages(token, selectedUser.id);
             if (res.success) {
+
+                if(!res.data) {
+                    // toast.error("No messages found for this user");
+                    return;
+                }
                 localStorage.setItem(`messages_${selectedUser.id}`, JSON.stringify(res.data.messages));
 
                 const formattedMessages = res.data.messages.map((msg: any) => ({
@@ -279,6 +289,7 @@ const MessageView: React.FC = () => {
                 }, {});
                 setLoadingImages(initialLoadingStates);
             }
+            
         } catch (error) {
             toast.error("Could not fetch messages");
         } finally {
@@ -393,6 +404,109 @@ const MessageView: React.FC = () => {
         return grouped;
     };
 
+    const MessageSkeleton =() => {
+  return (
+    <div className="space-y-6 p-4">
+    {/* Date divider skeleton */}
+    <div className="flex justify-center">
+      <Skeleton 
+        width={100} 
+        height={24} 
+        className="rounded-full"
+        baseColor="#f3f4f6"
+        highlightColor="#e5e7eb"
+      />
+    </div>
+
+    {/* Incoming message skeleton */}
+    <div className="flex items-start gap-3">
+      <Skeleton 
+        circle 
+        width={40} 
+        height={40} 
+        baseColor="#f3f4f6"
+        highlightColor="#e5e7eb"
+      />
+      <div className="flex-1 space-y-2">
+        <Skeleton 
+          width={120} 
+          height={16} 
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+        <Skeleton 
+          width={200} 
+          height={80} 
+          className="rounded-lg rounded-bl-none"
+          baseColor="#ffffff"
+          highlightColor="#f9fafb"
+        />
+        <Skeleton 
+          width={60} 
+          height={12} 
+          className="self-end"
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+      </div>
+    </div>
+
+    {/* Outgoing message skeleton */}
+    <div className="flex items-start justify-end gap-3">
+      <div className="flex-1 space-y-2 flex flex-col items-end">
+        <Skeleton 
+          width={200} 
+          height={80} 
+          className="rounded-lg rounded-br-none"
+          baseColor="#8b5cf6"
+          highlightColor="#a78bfa"
+        />
+        <Skeleton 
+          width={60} 
+          height={12} 
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+      </div>
+    </div>
+
+    {/* Image message skeleton */}
+    <div className="flex items-start gap-3">
+      <Skeleton 
+        circle 
+        width={40} 
+        height={40} 
+        baseColor="#f3f4f6"
+        highlightColor="#e5e7eb"
+      />
+      <div className="flex-1 space-y-2">
+        <Skeleton 
+          width={120} 
+          height={16} 
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+        <Skeleton 
+          width={300} 
+          height={200} 
+          className="rounded-lg"
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+        <Skeleton 
+          width={60} 
+          height={12} 
+          className="self-end"
+          baseColor="#f3f4f6"
+          highlightColor="#e5e7eb"
+        />
+      </div>
+    </div>
+  </div>
+  );
+};
+
+
     const groupedMessages = groupMessagesByDate();
 
     if (!selectedUser) {
@@ -408,6 +522,7 @@ const MessageView: React.FC = () => {
 
     return (
         <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 h-full">
+        {/* <Navbar/> */}
             {/* Chat Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between">
                 <div className="flex items-center">
@@ -453,9 +568,7 @@ const MessageView: React.FC = () => {
             {/* Messages */}
             <div className="flex-1 p-4 overflow-y-auto" ref={messagesContainerRef}>
                 {loading ? (
-                    <div className="flex justify-center items-center h-full">
-                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
-                    </div>
+                    <MessageSkeleton />
                 ) : Object.entries(groupedMessages).length > 0 ? (
                     Object.entries(groupedMessages).map(([date, dateMessages]) => (
                         <div key={date} className="mb-6">

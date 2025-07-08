@@ -402,15 +402,20 @@ const UserManagement = () => {
         });
     };
 
-    const handleViewUserDetails = async (userId: string) => {
-        try {
-            const userDetails = await adminService.getUserDetails(token, userId, userData.id);
-            setSelectedUser(userDetails);
-            setIsModalOpen(true);
-        } catch (error) {
-            toast.error("Failed to fetch user details");
-        }
-    };
+    const [isLoading, setIsLoading] = useState(false);
+
+   const handleViewUserDetails = async (userId: string) => {
+    try {
+        setIsLoading(true);
+        setIsModalOpen(true);
+        const userDetails = await adminService.getUserDetails(token, userId, userData.id);
+        setSelectedUser(userDetails);
+    } catch (error) {
+        toast.error("Failed to fetch user details");
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     //   const handleBanUser = async (userId: string) => {
     //     try {
@@ -736,167 +741,193 @@ const UserManagement = () => {
                 </motion.div>
 
                 {/* User Detail Modal */}
-                <AnimatePresence>
-                    {isModalOpen && selectedUser && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm"
-                            onClick={() => setIsModalOpen(false)}
-                        >
-                            <motion.div
-                                initial={{ scale: 0.9, y: 20 }}
-                                animate={{ scale: 1, y: 0 }}
-                                exit={{ scale: 0.9, y: 20 }}
-                                className="relative bg-gray-900 rounded-xl border border-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <button
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-800 transition-colors"
-                                >
-                                    <FaTimes className="text-xl" />
-                                </button>
+              {/* User Detail Modal */}
+<AnimatePresence>
+    {(isModalOpen && (selectedUser || isLoading)) && (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm"
+            onClick={() => setIsModalOpen(false)}
+        >
+            <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="relative bg-gray-900 rounded-xl border border-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-800 transition-colors"
+                >
+                    <FaTimes className="text-xl" />
+                </button>
 
-                                <div className="p-6">
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        {/* Profile Picture Section */}
-                                        <div className="flex-shrink-0">
-                                            <div className="relative">
-                                                {selectedUser.profilePic ? (
-                                                    <img
-                                                        src={selectedUser.profilePic}
-                                                        alt={selectedUser.userName}
-                                                        className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-blue-500/30 shadow-lg"
-                                                    />
-                                                ) : (
-                                                    <FaUserCircle className="w-32 h-32 md:w-40 md:h-40 text-gray-400 rounded-full" />
-                                                )}
-                                                <div className="absolute -bottom-2 right-2 bg-gray-800 rounded-full p-2 border border-gray-700">
-                                                    {selectedUser.role?.includes("ADMIN") ? (
-                                                        <FaUserShield className="text-yellow-400 text-xl" title="Admin" />
-                                                    ) : (
-                                                        <FaUserCircle className="text-blue-400 text-xl" title="User" />
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* User Details Section */}
-                                        <div className="flex-1 space-y-4">
-                                            <div>
-                                                <h2 className="text-2xl font-bold text-white">{selectedUser.userName}</h2>
-                                                <div className="flex items-center space-x-2 mt-1">
-                                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${selectedUser.isBanned
-                                                            ? 'bg-red-500/20 text-red-400'
-                                                            : selectedUser.isActive
-                                                                ? 'bg-green-500/20 text-green-400'
-                                                                : 'bg-gray-500/20 text-gray-400'
-                                                        }`}>
-                                                        {selectedUser.isBanned ? 'Banned' : selectedUser.isActive ? 'Active' : 'Inactive'}
-                                                    </span>
-                                                    {selectedUser.email && (
-                                                        <span className="text-sm text-gray-400">{selectedUser.email}</span>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Profile Details */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="bg-gray-800/50 p-3 rounded-lg">
-                                                    <h3 className="text-sm font-medium text-gray-400 mb-1">Bio</h3>
-                                                    <p className="text-white">
-                                                        {selectedUser.profileDetail?.bio || 'Not specified'}
-                                                    </p>
-                                                </div>
-
-                                                <div className="bg-gray-800/50 p-3 rounded-lg">
-                                                    <h3 className="text-sm font-medium text-gray-400 mb-1">Pronouns</h3>
-                                                    <p className="text-white">
-                                                        {selectedUser.profileDetail?.pronoun || 'Not specified'}
-                                                    </p>
-                                                </div>
-
-                                                <div className="bg-gray-800/50 p-3 rounded-lg">
-                                                    <h3 className="text-sm font-medium text-gray-400 mb-1">Gender</h3>
-                                                    <p className="text-white">
-                                                        {selectedUser.profileDetail?.gender || 'Not specified'}
-                                                    </p>
-                                                </div>
-
-                                                <div className="bg-gray-800/50 p-3 rounded-lg">
-                                                    <h3 className="text-sm font-medium text-gray-400 mb-1">Profession</h3>
-                                                    <p className="text-white">
-                                                        {selectedUser.profileDetail?.profession || 'Not specified'}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* Account Details */}
-                                            <div className="bg-gray-800/30 p-4 rounded-lg">
-                                                <h3 className="text-sm font-medium text-gray-400 mb-2">Account Information</h3>
-                                                <div className="space-y-2">
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-400">User ID:</span>
-                                                        <span className="text-white font-mono text-sm">{selectedUser.id}</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-400">Role:</span>
-                                                        <span className="text-white">
-                                                            {selectedUser.role?.join(', ') || 'User'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-400">Account Created:</span>
-                                                        <span className="text-white">
-                                                            {new Date(selectedUser.createdAt).toLocaleDateString()}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                <div className="p-6">
+                    <div className="flex flex-col md:flex-row gap-6">
+                        {/* Profile Picture Section */}
+                        <div className="flex-shrink-0">
+                            <div className="relative">
+                                {isLoading ? (
+                                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-700 animate-pulse" />
+                                ) : selectedUser?.profilePic ? (
+                                    <img
+                                        src={selectedUser.profilePic}
+                                        alt={selectedUser.userName}
+                                        className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-blue-500/30 shadow-lg"
+                                    />
+                                ) : (
+                                    <FaUserCircle className="w-32 h-32 md:w-40 md:h-40 text-gray-400 rounded-full" />
+                                )}
+                                {!isLoading && (
+                                    <div className="absolute -bottom-2 right-2 bg-gray-800 rounded-full p-2 border border-gray-700">
+                                        {selectedUser?.role?.includes("ADMIN") ? (
+                                            <FaUserShield className="text-yellow-400 text-xl" title="Admin" />
+                                        ) : (
+                                            <FaUserCircle className="text-blue-400 text-xl" title="User" />
+                                        )}
                                     </div>
+                                )}
+                            </div>
+                        </div>
 
-                                    {/* Action Buttons */}
-                                    <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-gray-800">
-                                        {!selectedUser.role?.includes("ADMIN") && (
+                        {/* User Details Section */}
+                        <div className="flex-1 space-y-4">
+                            <div>
+                                {isLoading ? (
+                                    <>
+                                        <div className="h-8 w-3/4 bg-gray-700 rounded animate-pulse mb-2" />
+                                        <div className="h-4 w-1/2 bg-gray-700 rounded animate-pulse" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <h2 className="text-2xl font-bold text-white">{selectedUser?.userName}</h2>
+                                        <div className="flex items-center space-x-2 mt-1">
+                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${selectedUser?.isBanned
+                                                    ? 'bg-red-500/20 text-red-400'
+                                                    : selectedUser?.isActive
+                                                        ? 'bg-green-500/20 text-green-400'
+                                                        : 'bg-gray-500/20 text-gray-400'
+                                                }`}>
+                                                {selectedUser?.isBanned ? 'Banned' : selectedUser?.isActive ? 'Active' : 'Inactive'}
+                                            </span>
+                                            {selectedUser?.email && (
+                                                <span className="text-sm text-gray-400">{selectedUser.email}</span>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Profile Details */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[1, 2, 3, 4].map((item) => (
+                                    <div key={item} className="bg-gray-800/50 p-3 rounded-lg">
+                                        {isLoading ? (
                                             <>
-                                                {selectedUser.isBanned ? (
-                                                    <button
-                                                        // onClick={() => handleUnbanUser(selectedUser.id)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-                                                    >
-                                                        <FaCheck /> Unban User
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        // onClick={() => handleBanUser(selectedUser.id)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                                                    >
-                                                        <FaBan /> Ban User
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleDeleteUser(selectedUser.id)}
-                                                    className="flex items-center gap-2 px-4 py-2 bg-red-900 hover:bg-red-800 text-white rounded-lg transition-colors"
-                                                >
-                                                    <FaTrash /> Delete Account
-                                                </button>
+                                                <div className="h-4 w-1/3 bg-gray-700 rounded animate-pulse mb-2" />
+                                                <div className="h-4 w-full bg-gray-700 rounded animate-pulse" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h3 className="text-sm font-medium text-gray-400 mb-1">
+                                                    {item === 1 ? 'Bio' : 
+                                                     item === 2 ? 'Pronouns' : 
+                                                     item === 3 ? 'Gender' : 'Profession'}
+                                                </h3>
+                                                <p className="text-white">
+                                                    {item === 1 ? (selectedUser?.profileDetail?.bio || 'Not specified') :
+                                                     item === 2 ? (selectedUser?.profileDetail?.pronoun || 'Not specified') :
+                                                     item === 3 ? (selectedUser?.profileDetail?.gender || 'Not specified') :
+                                                     (selectedUser?.profileDetail?.profession || 'Not specified')}
+                                                </p>
                                             </>
                                         )}
-                                        <button
-                                            onClick={() => setIsModalOpen(false)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors ml-auto"
-                                        >
-                                            Close
-                                        </button>
                                     </div>
+                                ))}
+                            </div>
+
+                            {/* Account Details */}
+                            <div className="bg-gray-800/30 p-4 rounded-lg">
+                                <h3 className="text-sm font-medium text-gray-400 mb-2">Account Information</h3>
+                                <div className="space-y-2">
+                                    {isLoading ? (
+                                        <>
+                                            {[1, 2, 3].map((item) => (
+                                                <div key={item} className="flex justify-between">
+                                                    <div className="h-4 w-1/4 bg-gray-700 rounded animate-pulse" />
+                                                    <div className="h-4 w-1/2 bg-gray-700 rounded animate-pulse" />
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">User ID:</span>
+                                                <span className="text-white font-mono text-sm">{selectedUser?.id}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Role:</span>
+                                                <span className="text-white">
+                                                    {selectedUser?.role?.join(', ') || 'User'}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Account Created:</span>
+                                                <span className="text-white">
+                                                    {selectedUser?.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'N/A'}
+                                                </span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
-                            </motion.div>
-                        </motion.div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    {!isLoading && (
+                        <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-gray-800">
+                            {!selectedUser?.role?.includes("ADMIN") && (
+                                <>
+                                    {selectedUser?.isBanned ? (
+                                        <button
+                                            // onClick={() => handleUnbanUser(selectedUser.id)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                                        >
+                                            <FaCheck /> Unban User
+                                        </button>
+                                    ) : (
+                                        <button
+                                            // onClick={() => handleBanUser(selectedUser.id)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                                        >
+                                            <FaBan /> Ban User
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleDeleteUser(selectedUser?.id || '')}
+                                        className="flex items-center gap-2 px-4 py-2 bg-red-900 hover:bg-red-800 text-white rounded-lg transition-colors"
+                                    >
+                                        <FaTrash /> Delete Account
+                                    </button>
+                                </>
+                            )}
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors ml-auto"
+                            >
+                                Close
+                            </button>
+                        </div>
                     )}
-                </AnimatePresence>
+                </div>
+            </motion.div>
+        </motion.div>
+    )}
+</AnimatePresence>
             </div>
         </div>
             </>
