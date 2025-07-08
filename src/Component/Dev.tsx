@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaGithub, FaLinkedin, FaInstagram, FaGooglePlay, FaAndroid, FaWindows, FaLinux } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaInstagram, FaGooglePlay, FaAndroid, FaWindows, FaLinux, FaDownload, FaApple, FaAppStore } from "react-icons/fa";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { RiTodoLine } from "react-icons/ri";
 import { FaCalculator } from "react-icons/fa";
@@ -44,58 +44,152 @@ const Dev = () => {
     },
   ];
 
-  const apps = [
-    {
-      icon: <FaAndroid className="w-5 h-5" />,
-      title: "Android App",
-      links: [
-        {
-          label: "Source Code",
-          url: "https://github.com/Manish-keer19/chatAndroidApp",
-          icon: <FaGithub className="w-4 h-4" />
-        },
-        {
-          label: "Play Store",
-          url: "#",
-          icon: <FaGooglePlay className="w-4 h-4" />,
-          comingSoon: true
-        }
-      ]
-    },
-    {
-      icon: <FaWindows className="w-5 h-5" />,
-      title: "Windows App",
-      links: [
-        {
-          label: "Download (.exe)",
-          url: "https://www.mediafire.com/file/nwocbj0icjrjrn4/manishchatapp_Setup_1.0.0.exe/file",
-          icon: <FiExternalLink className="w-4 h-4" />
-        },
-        {
-          label: "Source Code",
-          url: "https://github.com/Manish-keer19/chat-web-app",
-          icon: <FaGithub className="w-4 h-4" />
-        }
-      ]
-    },
-    {
-      icon: <FaLinux className="w-5 h-5" />,
-      title: "Linux App",
-      links: [
-        {
-          label: "Download (.AppImage)",
-          url: "https://www.mediafire.com/file/4d8d26j94s1ht75/manishchatapp-1.0.0.AppImage/file",
-          icon: <FiExternalLink className="w-4 h-4" />
-        },
-        {
-          label: "Source Code",
-          url: "https://github.com/Manish-keer19/chat-web-app",
-          icon: <FaGithub className="w-4 h-4" />
-        }
-      ]
-    }
-  ];
+//   const apps = [
+//     {
+//       icon: <FaAndroid className="w-5 h-5" />,
+//       title: "Android App",
+//       links: [
+//   {
+//     label: "Source Code",
+//     url: "https://github.com/Manish-keer19/chatAndroidApp",
+//     icon: <FaGithub className="w-4 h-4" />
+//   },
+//   {
+//     label: "Download APK",
+//     url: "https://www.mediafire.com/file/uxspenk3n8y46wn/manishChatApp.apk/file",
+//     icon: <FaDownload className="w-4 h-4" />
+//   },
+//   {
+//     label: "Play Store",
+//     url: "#",
+//     icon: <FaGooglePlay className="w-4 h-4" />,
+//     comingSoon: true
+//   }
+// ]
+//     },
+//     {
+//       icon: <FaWindows className="w-5 h-5" />,
+//       title: "Windows App",
+//       links: [
+//         {
+//           label: "Download (.exe)",
+//           url: "https://www.mediafire.com/file/nwocbj0icjrjrn4/manishchatapp_Setup_1.0.0.exe/file",
+//           icon: <FiExternalLink className="w-4 h-4" />
+//         },
+//         {
+//           label: "Source Code",
+//           url: "https://github.com/Manish-keer19/chat-web-app",
+//           icon: <FaGithub className="w-4 h-4" />
+//         }
+//       ]
+//     },
+//     {
+//       icon: <FaLinux className="w-5 h-5" />,
+//       title: "Linux App",
+//       links: [
+//         {
+//           label: "Download (.AppImage)",
+//           url: "https://www.mediafire.com/file/4d8d26j94s1ht75/manishchatapp-1.0.0.AppImage/file",
+//           icon: <FiExternalLink className="w-4 h-4" />
+//         },
+//         {
+//           label: "Source Code",
+//           url: "https://github.com/Manish-keer19/chat-web-app",
+//           icon: <FaGithub className="w-4 h-4" />
+//         }
+//       ]
+//     }
+//   ];
 
+
+
+const apps = [
+  {
+    icon: <FaAndroid className="w-5 h-5" />,
+    title: "Android App",
+    links: [
+      {
+        label: "Source Code",
+        url: "https://github.com/Manish-keer19/chatAndroidApp",
+        icon: <FaGithub className="w-4 h-4" />
+      },
+      {
+        label: "Download APK",
+        url: "https://www.mediafire.com/file/uxspenk3n8y46wn/manishChatApp.apk/file",
+        icon: <FaDownload className="w-4 h-4" />
+      },
+      {
+        label: "Play Store",
+        url: "#",
+        icon: <FaGooglePlay className="w-4 h-4" />,
+        comingSoon: true
+      }
+    ]
+  },
+  {
+    icon: <FaApple className="w-5 h-5" />,
+    title: "iOS App",
+    links: [
+      {
+        label: "App Store",
+        url: "#",
+        icon: <FaAppStore className="w-4 h-4" />,
+        comingSoon: true
+      }
+    ]
+  },
+  {
+    icon: <FaWindows className="w-5 h-5" />,
+    title: "Windows App",
+    links: [
+      {
+        label: "Download (.exe)",
+        url: "https://www.mediafire.com/file/nwocbj0icjrjrn4/manishchatapp_Setup_1.0.0.exe/file",
+        icon: <FiExternalLink className="w-4 h-4" />
+      },
+      {
+        label: "Source Code",
+        url: "https://github.com/Manish-keer19/chat-web-app",
+        icon: <FaGithub className="w-4 h-4" />
+      }
+    ]
+  },
+ 
+  {
+    icon: <FaLinux className="w-5 h-5" />,
+    title: "Linux App",
+    links: [
+      {
+        label: "Download (.AppImage)",
+        url: "https://www.mediafire.com/file/4d8d26j94s1ht75/manishchatapp-1.0.0.AppImage/file",
+        icon: <FiExternalLink className="w-4 h-4" />
+      },
+      {
+        label: "Source Code",
+        url: "https://github.com/Manish-keer19/chat-web-app",
+        icon: <FaGithub className="w-4 h-4" />
+      }
+    ]
+  },
+   {
+    icon: <FaApple className="w-5 h-5" />,
+    title: "macOS App",
+    links: [
+      {
+        label: "Download (.dmg)",
+        url: "#",
+        icon: <FiExternalLink className="w-4 h-4" />,
+        comingSoon: true
+      },
+      {
+        label: "Source Code",
+        url: "https://github.com/Manish-keer19/chat-web-app",
+        icon: <FaGithub className="w-4 h-4" />
+      }
+    ]
+  }
+
+];
   const socialLinks = [
     {
       icon: <FaGithub className="w-4 h-4" />,
@@ -254,7 +348,7 @@ const Dev = () => {
         </motion.div>
 
         {/* Platform Apps Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
           {apps.map((app, index) => (
             <motion.div
               key={index}
@@ -287,7 +381,55 @@ const Dev = () => {
               </div>
             </motion.div>
           ))}
+        </div> */}
+
+        {/* Platform Apps Section */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+  {apps.map((app, index) => (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.15 }}
+      className={`bg-gray-900/50 rounded-xl p-5 border ${app.title.includes('Coming Soon') ? 'border-pink-900/50' : 'border-gray-800'}`}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <div className={`w-8 h-8 rounded-md flex items-center justify-center ${app.title.includes('Coming Soon') ? 'bg-gradient-to-br from-pink-600 to-purple-600 opacity-80' : 'bg-gradient-to-br from-purple-600 to-pink-600'}`}>
+          {app.icon}
         </div>
+        <h3 className="text-base font-medium text-gray-100">
+          {app.title}
+          {app.title.includes('Coming Soon') && (
+            <span className="ml-2 text-xs bg-pink-900/30 text-pink-400 px-2 py-0.5 rounded-full">Coming Soon</span>
+          )}
+        </h3>
+      </div>
+      <div className="space-y-2">
+        {app.links.map((link, linkIndex) => (
+          <motion.a
+            key={linkIndex}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ x: link.comingSoon ? 0 : 3 }}
+            className={`flex items-center gap-2 text-xs sm:text-sm px-3 py-2 rounded-lg ${
+              link.comingSoon 
+                ? 'bg-gray-800/30 text-gray-500 cursor-not-allowed' 
+                : 'bg-gray-800 hover:bg-gray-700 cursor-pointer'
+            }`}
+            onClick={link.comingSoon ? (e) => e.preventDefault() : undefined}
+          >
+            {link.icon}
+            <span>{link.label}</span>
+            {link.comingSoon && (
+              <span className="text-xs text-pink-400 ml-auto">Coming Soon</span>
+            )}
+          </motion.a>
+        ))}
+      </div>
+    </motion.div>
+  ))}
+</div>
 
         {/* Technologies Section */}
         <motion.div
