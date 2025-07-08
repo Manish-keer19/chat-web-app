@@ -35,6 +35,7 @@ export const userSlice = createSlice({
       state.token = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.clear(); // Clear all local storage items
       console.log("Logged out successfully");
     },
   },
