@@ -253,8 +253,23 @@ import { RiTodoLine } from "react-icons/ri";
 import { FaCalculator } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import Navbar from "./Navbar";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Dev = () => {
+  const user = useSelector((state: any) => state.User.userdata);
+  const navigation = useNavigate();
+
+  useEffect(()=>{
+    if (user) {
+    navigation("/advance-MessageUi")
+    return
+
+
+  }
+  },[])
+
   const features = [
     {
       icon: <BiMessageSquareDetail className="w-5 h-5" />,
@@ -317,7 +332,7 @@ const Dev = () => {
             </span>
           </h1>
           <p className="text-gray-400 max-w-3xl mx-auto text-base sm:text-lg">
-            A full-stack solution showcasing modern development practices with seamless 
+            A full-stack solution showcasing modern development practices with seamless
             synchronization across all your devices.
           </p>
         </motion.div>
@@ -350,7 +365,7 @@ const Dev = () => {
           className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 mb-12"
         >
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.03 }}
               className="relative flex-shrink-0"
             >
@@ -366,7 +381,7 @@ const Dev = () => {
                 Developed by Manish Keer
               </h2>
               <p className="text-gray-400 mb-4 text-sm sm:text-base">
-                Passionate full-stack developer creating seamless digital experiences 
+                Passionate full-stack developer creating seamless digital experiences
                 across platforms with modern technologies.
               </p>
               <div className="flex justify-center sm:justify-start gap-3">
@@ -398,7 +413,7 @@ const Dev = () => {
         >
           <div className="absolute -top-32 -right-32 w-64 h-64 bg-purple-600 rounded-full filter blur-[100px] opacity-10"></div>
           <div className="relative flex flex-col md:flex-row items-center gap-8">
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.02 }}
               className="flex-shrink-0"
             >
@@ -411,7 +426,7 @@ const Dev = () => {
                 Native Android Application
               </h2>
               <p className="text-gray-400 mb-6 text-sm sm:text-base">
-                Optimized for mobile with additional features like push notifications, 
+                Optimized for mobile with additional features like push notifications,
                 offline mode, and battery-efficient background sync.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -454,7 +469,7 @@ const Dev = () => {
           </h2>
           <div className="flex flex-wrap justify-center gap-2.5">
             {[
-              "React", "TypeScript", "Tailwind CSS", "WebSocket", 
+              "React", "TypeScript", "Tailwind CSS", "WebSocket",
               "Node.js", "Spring Boot", "MongoDB", "JWT Auth",
               "Electron", "Android SDK", "Kotlin", "Redis"
             ].map((tech, index) => (

@@ -17,6 +17,9 @@ import About from "./Component/About";
 
 import OAuthSuccessPage from "./Component/OAuthSuccessPage";
 import UserManagement from "./Component/Admin/UserManagment";
+import UserList from "./Component/Message/UserList";
+import MessageView from "./Component/Message/MessageView";
+
 
 
 
@@ -37,6 +40,14 @@ const route = createHashRouter([
   {
     path: "/advance-MessageUi",
     element: <AdvanceMessageUI />,
+  },
+  {
+    path: "/messages",
+    element: <UserList />,
+  },
+  {
+    path: "/messages/:userId",
+    element: <MessageView />,
   },
   {
     path: "/calc",
@@ -66,6 +77,7 @@ const route = createHashRouter([
     path: "/oauth-success",
     element: <OAuthSuccessPage />,
   },
+
   {
     path: "/admin",
     element: <UserManagement />,

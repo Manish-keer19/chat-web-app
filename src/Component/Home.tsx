@@ -62,7 +62,7 @@ const HomePage: React.FC = () => {
    
     {
       title: "Advanced Chat",
-      path: "/advance-MessageUi",
+      path: "/messages",
       icon: "📱",
       description: "Feature-rich Chat",
     },

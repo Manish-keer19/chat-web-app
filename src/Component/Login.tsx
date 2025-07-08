@@ -219,18 +219,32 @@
 
 
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaGoogle, FaGithub } from "react-icons/fa";
-import { setToken, setUser } from "../features/User/UserSlice";
+import { setToken, setUser, UsersState } from "../features/User/UserSlice";
 import { authService } from "../Service/Authservice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+const user = useSelector((state: any) => state.User.userdata);
+  const token = useSelector((state: { User: UsersState }) => state.User.token);
+
+
+  console.log("User in login form", user);
+  console.log("Token in login form", token);
+ 
+
+  useEffect(() => {
+    if (user && token) {
+      navigate("/messages");
+    }
+  }, [user, token, navigate]);
 
   const [password, setPassword] = useState("");
   const [loginData, setLoginData] = useState("");

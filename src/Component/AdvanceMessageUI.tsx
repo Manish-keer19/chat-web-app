@@ -64,7 +64,7 @@ const AdvanceMessageUI: React.FC = () => {
 
   const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
   // Add this state to track scroll direction
-const [showUpButton, setShowUpButton] = useState(false);
+  const [showUpButton, setShowUpButton] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,43 +95,43 @@ const [showUpButton, setShowUpButton] = useState(false);
   }, []);
 
 
-useEffect(() => {
-  const container = messagesContainerRef.current;
-  if (!container) return;
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
 
-  const handleScroll = () => {
-    if (container) {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const isNearBottom = scrollHeight - (scrollTop + clientHeight) > 200;
-      setShowScrollButton(isNearBottom);
-      setShowUpButton(scrollTop > 200);
+    const handleScroll = () => {
+      if (container) {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        const isNearBottom = scrollHeight - (scrollTop + clientHeight) > 200;
+        setShowScrollButton(isNearBottom);
+        setShowUpButton(scrollTop > 200);
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   };
 
-  container.addEventListener('scroll', handleScroll);
-  return () => container.removeEventListener('scroll', handleScroll);
-}, []);
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
 
-const scrollToTop = () => {
-  if (messagesContainerRef.current) {
-    messagesContainerRef.current.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
-};
 
-const scrollToBottom = () => {
-  if (messagesContainerRef.current) {
-    messagesContainerRef.current.scrollTo({
-      top: messagesContainerRef.current.scrollHeight,
-      behavior: 'smooth'
-    });
-  }
-};
 
- 
- 
 
   const handleSelectUser = (user: User) => {
     setMessages([]);
@@ -146,8 +146,17 @@ const scrollToBottom = () => {
         toast.error("Token not found");
         return;
       }
+      // Check if users are already in localStorage
+      const cachedUsers = localStorage.getItem("users");
+      if (cachedUsers) {
+        const parsedUsers = JSON.parse(cachedUsers);
+        setUsers(parsedUsers);
+        return;
+      }
+
       const res = await userService.getUsersData(token);
       if (res.success) {
+        localStorage.setItem("users", JSON.stringify(res.data));
         setUsers(res.data);
       }
     } catch (error) {
@@ -183,6 +192,13 @@ const scrollToBottom = () => {
       // Private messages subscription
       client.subscribe(`/user/queue/${userData.id}`, (message) => {
         const messageData = JSON.parse(message.body);
+        const storageKey = `messages_${selectedUser?.id}`;
+        const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+
+        // Append new message and keep only the last 100 messages
+        const updatedMessages = [...existing, messageData].slice(-100);
+
+        localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
         setMessages((prevMessages) => {
           const newMessages = [...prevMessages, messageData];
           // Set loading state for any new messages with media
@@ -227,7 +243,7 @@ const scrollToBottom = () => {
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-    
+
     if (e.target.value.length > 0) {
       sendTypingIndicator(true);
       if (typingTimeout) {
@@ -253,6 +269,8 @@ const scrollToBottom = () => {
         {},
         JSON.stringify(messageData)
       );
+
+
       setMessage("");
       setSelectedFile(null);
       setFilePreview(null);
@@ -270,16 +288,33 @@ const scrollToBottom = () => {
   const getMessages = async () => {
     try {
       if (!selectedUser || !token) return;
+
+      // Check if messages are already in localStorage
+      const cachedMessages = localStorage.getItem(`messages_${selectedUser.id}`);
+      if (cachedMessages) {
+        const parsedMessages = JSON.parse(cachedMessages).map((msg: any) => ({
+          ...msg,
+          createdAt: new Date(msg.createdAt)
+        }));
+        setMessages(parsedMessages);
+
+        return;
+      }
       const res = await userService.getUserMessages(token, selectedUser.id);
       if (res.success) {
+
+        // store messages in localStorage
+        localStorage.setItem(`messages_${selectedUser.id}`, JSON.stringify(res.data.messages));
+
+
         const formattedMessages = res.data.messages.map((msg: any) => ({
           ...msg,
           createdAt: new Date(msg.createdAt)
         }));
         setMessages(formattedMessages);
-        
+
         // Initialize loading states for all messages with media
-        const initialLoadingStates = res.data.messages.reduce((acc: {[key: string]: boolean}, msg: any) => {
+        const initialLoadingStates = res.data.messages.reduce((acc: { [key: string]: boolean }, msg: any) => {
           if (msg.media) {
             acc[msg.id] = true;
           }
@@ -312,7 +347,7 @@ const scrollToBottom = () => {
 
   const handleFileSave = async (): Promise<void> => {
     if (!selectedFile || !selectedUser || !token) return;
-    
+
     try {
       const data = new FormData();
       data.append("file", selectedFile);
@@ -320,7 +355,7 @@ const scrollToBottom = () => {
         "messageRequest",
         JSON.stringify({ senderId: userData.id, receiverId: selectedUser.id })
       );
-      
+
       const res = await userService.SendMedia(token, data);
       if (res.success) {
         const newMessage: Message = {
@@ -331,7 +366,7 @@ const scrollToBottom = () => {
           media: res.data.mediaUrl,
           mediaType: "image"
         };
-        
+
         setMessages(prev => [...prev, newMessage]);
         setLoadingImages(prev => ({ ...prev, [newMessage.id]: true }));
       }
@@ -391,7 +426,7 @@ const scrollToBottom = () => {
 
   const groupMessagesByDate = () => {
     const grouped: { [key: string]: Message[] } = {};
-    
+
     messages.forEach(message => {
       const dateKey = formatDate(message.createdAt);
       if (!grouped[dateKey]) {
@@ -399,7 +434,7 @@ const scrollToBottom = () => {
       }
       grouped[dateKey].push(message);
     });
-    
+
     return grouped;
   };
 
@@ -430,7 +465,7 @@ const scrollToBottom = () => {
                       Messages
                     </h1>
                   </div>
-                  
+
                 </div>
                 {/* Search Bar */}
                 <div className="mt-4 relative">
@@ -453,9 +488,8 @@ const scrollToBottom = () => {
                   filteredUsers.map((user) => (
                     <div
                       key={user.id}
-                      className={`flex items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                        selectedUser?.id === user.id ? "bg-purple-50 dark:bg-gray-700" : ""
-                      }`}
+                      className={`flex items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${selectedUser?.id === user.id ? "bg-purple-50 dark:bg-gray-700" : ""
+                        }`}
                       onClick={() => handleSelectUser(user)}
                     >
                       <div className="relative">
@@ -468,9 +502,8 @@ const scrollToBottom = () => {
                           }}
                         />
                         <span
-                          className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
-                            user.status === "Online" ? "bg-green-500" : "bg-gray-400"
-                          }`}
+                          className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${user.status === "Online" ? "bg-green-500" : "bg-gray-400"
+                            }`}
                         ></span>
                       </div>
                       <div className="ml-3 flex-1">
@@ -521,9 +554,8 @@ const scrollToBottom = () => {
                       }}
                     />
                     <span
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
-                        selectedUser.status === "Online" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${selectedUser.status === "Online" ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     ></span>
                   </div>
                   <div className="ml-3">
@@ -544,7 +576,7 @@ const scrollToBottom = () => {
                   </button>
                 </div>
 
-                
+
               </div>
 
               {/* Messages */}
@@ -559,16 +591,14 @@ const scrollToBottom = () => {
                     {dateMessages.map((msg, index) => (
                       <div
                         key={msg.id || index}
-                        className={`flex mb-4 ${
-                          msg.sender === userData.id ? "justify-end" : "justify-start"
-                        }`}
+                        className={`flex mb-4 ${msg.sender === userData.id ? "justify-end" : "justify-start"
+                          }`}
                       >
                         <div
-                          className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg p-3 ${
-                            msg.sender === userData.id
-                              ? "bg-purple-500 text-white rounded-br-none"
-                              : "bg-white dark:bg-gray-700 text-gray-800 dark:text-white rounded-bl-none"
-                          } shadow`}
+                          className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg p-3 ${msg.sender === userData.id
+                            ? "bg-purple-500 text-white rounded-br-none"
+                            : "bg-white dark:bg-gray-700 text-gray-800 dark:text-white rounded-bl-none"
+                            } shadow`}
                         >
                           {msg.media && (
                             <div className="mb-2 overflow-hidden rounded-lg relative">
@@ -580,22 +610,20 @@ const scrollToBottom = () => {
                               <img
                                 src={msg.media}
                                 alt="Media"
-                                className={`max-h-60 w-full object-cover cursor-pointer hover:opacity-90 transition-opacity ${
-                                  loadingImages[msg.id] ? 'opacity-0' : 'opacity-100'
-                                }`}
+                                className={`max-h-60 w-full object-cover cursor-pointer hover:opacity-90 transition-opacity ${loadingImages[msg.id] ? 'opacity-0' : 'opacity-100'
+                                  }`}
                                 onClick={() => openLightbox(msg.media!)}
                                 onLoad={() => handleImageLoad(msg.id)}
-                              
+
                               />
                             </div>
                           )}
                           {msg.message && <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>}
                           <div
-                            className={`text-xs mt-1 flex justify-end items-center ${
-                              msg.sender === userData.id
-                                ? "text-purple-100"
-                                : "text-gray-500 dark:text-gray-400"
-                            }`}
+                            className={`text-xs mt-1 flex justify-end items-center ${msg.sender === userData.id
+                              ? "text-purple-100"
+                              : "text-gray-500 dark:text-gray-400"
+                              }`}
                           >
                             {formatTime(msg.createdAt)}
                           </div>
@@ -605,32 +633,32 @@ const scrollToBottom = () => {
                   </div>
                 ))}
 
-                
-                <div ref={messagesEndRef} />
-                
 
-                
-              
+                <div ref={messagesEndRef} />
+
+
+
+
               </div>
-{/* Scroll buttons container */}
-<div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-  {showUpButton && (
-    <button
-      onClick={scrollToTop}
-      className="p-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-colors"
-    >
-      <IoArrowUp size={20} />
-    </button>
-  )}
-  {showScrollButton && (
-    <button
-      onClick={scrollToBottom}
-      className="p-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-colors"
-    >
-      <IoArrowDown size={20} />
-    </button>
-  )}
-</div>
+              {/* Scroll buttons container */}
+              <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
+                {showUpButton && (
+                  <button
+                    onClick={scrollToTop}
+                    className="p-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-colors"
+                  >
+                    <IoArrowUp size={20} />
+                  </button>
+                )}
+                {showScrollButton && (
+                  <button
+                    onClick={scrollToBottom}
+                    className="p-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-colors"
+                  >
+                    <IoArrowDown size={20} />
+                  </button>
+                )}
+              </div>
 
               {/* Message Input */}
               <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800  ">
@@ -687,9 +715,9 @@ const scrollToBottom = () => {
                     />
                     {showEmojiPicker && (
                       <div ref={emojiPickerRef} className="absolute bottom-14 left-0 z-10">
-                        <EmojiPicker 
-                          onEmojiClick={handleEmojiClick} 
-                          width={300} 
+                        <EmojiPicker
+                          onEmojiClick={handleEmojiClick}
+                          width={300}
                           height={350}
                           searchDisabled
                           skinTonesDisabled
@@ -706,11 +734,10 @@ const scrollToBottom = () => {
                         sendMessage();
                       }
                     }}
-                    className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors ${
-                      message.trim() || selectedFile
-                        ? "bg-purple-500 text-white hover:bg-purple-600"
-                        : "bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
-                    }`}
+                    className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors ${message.trim() || selectedFile
+                      ? "bg-purple-500 text-white hover:bg-purple-600"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                      }`}
                     disabled={!message.trim() && !selectedFile}
                   >
                     <MdSend size={24} />
@@ -730,7 +757,7 @@ const scrollToBottom = () => {
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                   Choose from your existing conversations or start a new one
                 </p>
-               
+
               </div>
             </div>
           )}
