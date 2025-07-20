@@ -262,7 +262,9 @@ const OAuthSuccessPage = () => {
                 const userData = await userService.getOauthUserData(token, userId);
 
                 if (userData.success) {
+                    console.log('User data from OAuth:', userData.data);
                     dispatch(setUser(userData.data));
+                    
                     setStatus('success');
                     setProgress(100);
                     setTimeout(() => navigate('/home'), 1500);

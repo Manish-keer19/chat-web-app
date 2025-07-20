@@ -1,56 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
-import { authService } from "../Service/Authservice";
-import { setToken, setUser } from "../features/User/UserSlice";
-import toast from "react-hot-toast";
 
-type userType = {
-  id: string;
-  userName: string;
-  profilePic: string;
-  status: "Online" | "Offline";
-  role: string[];
-};
+
+
 
 const HomePage: React.FC = () => {
-  const dispatch = useDispatch();
+ 
   const navigate = useNavigate();
-  const userDetails = useSelector((state: any) => state.User.userdata);
+  const userData = useSelector((state: any) => state.User.userdata);
+  // const navigation = useNavigate();
 
-  const [userData, setuserData] = useState<userType>();
-
-  // console.log("userData in home", userData);
-
-  const getOauth2UserData = async () => {
-    try {
-      const res = await authService.getOauth2UserData();
-      if (res && res.success) {
-        console.log("user data from oauth2", res);
-        setuserData(res.data.user);
-        console.log("token from oauth2", res.data.token);
-        dispatch(setToken(res.data.token));
-        dispatch(setUser(res.data.user));
-      } else {
-        navigate("/login");
-      }
-    } catch (error) {
-      navigate("/login");
-     toast.error("could not get the oauth2 user data");
-      console.error("could not get the oauth2 user data", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!userDetails) {
-      getOauth2UserData();
-    } else {
-      console.log("there is not need to ");
-      setuserData(userDetails);
-    }
-  }, []);
 
   const menuItems = [
     {

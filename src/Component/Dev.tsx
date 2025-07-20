@@ -9,6 +9,8 @@ import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { Helmet } from "react-helmet";
 
 const Dev = () => {
   const user = useSelector((state: any) => state.User.userdata);
@@ -18,6 +20,9 @@ const Dev = () => {
     if (user) {
       navigation("/messages");
       return;
+    }
+    else{
+      toast.error("user is not found")
     }
   }, [user, navigation]);
 
@@ -230,6 +235,12 @@ const apps = [
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
+     <Helmet>
+        <title>Manish Chat App</title>
+        <meta name="description" content="Chat instantly with Manish's real-time web chat app." />
+        <meta name="keywords" content="Manish, Chat App, Real-time, React, Messaging" />
+        <meta name="author" content="Manish Keer" />
+      </Helmet>
       <Navbar />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Hero Section */}
@@ -409,7 +420,7 @@ const apps = [
           <motion.a
             key={linkIndex}
             href={link.url}
-            target="_blank"
+            target="_blank" 
             rel="noopener noreferrer"
             whileHover={{ x: link.comingSoon ? 0 : 3 }}
             className={`flex items-center gap-2 text-xs sm:text-sm px-3 py-2 rounded-lg ${
